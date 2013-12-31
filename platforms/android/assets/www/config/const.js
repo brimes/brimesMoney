@@ -1,0 +1,7 @@
+var DATABASE_NAME = "brimes_money";
+var DATABASE_VERSION = "1.0";
+var DATABASE_DESCRIPTION = "Brimes Money";
+var DATABASE_SIZE = 2500000;
+var MIGRATE_VERSION = 1;
+var VERSAO_APP = '1.0.0';
+

@@ -1,0 +1,3 @@
+var configControllers = [
+  {"nome" : "app"}
+];

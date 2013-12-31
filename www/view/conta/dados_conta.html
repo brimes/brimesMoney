@@ -1,0 +1,41 @@
+<form class="form-inline" role="form">
+    <input type="hidden" id="idConta"/>
+    <div class="row linha_form">
+        <div class="form-group col-xs-12 col-sm-12 col-lg-6">
+            <div class="input-group">
+                <span class="input-group-addon"><span class="">C</span></span>
+                <input type="text" placeholder="Descrição da conta" class="form-control obrigatorio" id="descricaoConta">
+            </div>
+        </div>
+        <div class="form-group col-xs-12 col-sm-6 col-lg-3">
+            <div class="input-group">
+                <span class="input-group-addon"><span class="glyphicon glyphicon-usd"></span></span>
+                <input type="number" placeholder="Saldo inicial" class="form-control text-right obrigatorio" id="saldoInicial">
+            </div>
+
+        </div>
+        <div class="form-group col-xs-12 col-sm-6 col-lg-3">
+            Tipo de conta:
+            <div class="btn-group tipo_conta">
+                <button type="button" tipo="0" class="btn btn-default btn_tipo">Débito</button>
+                <button type="button" tipo="1" class="btn btn-default btn_tipo">Crédito</button>
+            </div>            
+        </div>
+    </div>
+    <div class="row linha_form" id="dadosCredito" style="display:none">
+        <div class="form-group col-xs-6 col-sm-4 col-lg-2">
+            <div class="input-group">
+                <span class="input-group-addon"><span class="glyphicon glyphicon-pushpin"></span></span>
+                <input type="text" placeholder="Dia venc." class="form-control obrigatorio" id="diaVencimento">
+            </div>
+        </div>
+        <div class="form-group col-xs-6 col-sm-4 col-lg-2">
+            <div class="input-group">
+                <span class="input-group-addon"><span class="glyphicon glyphicon-usd"></span></span>
+                <input type="number" placeholder="Limite" class="form-control obrigatorio" id="limiteCredito">
+            </div>
+        </div>
+        
+    </div>
+    <button id="btnSalvar" type="button" class="btn btn-default pull-right">Salvar</button>
+</form>
