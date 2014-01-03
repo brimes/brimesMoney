@@ -1,2 +1,0 @@
-var configModels = new Array(
-);

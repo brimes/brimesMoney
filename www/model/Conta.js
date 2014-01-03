@@ -29,6 +29,23 @@ Conta.getTotaldeContas = function(onSuccess, onError) {
 
 };
 
+Conta.atualizaSaldo = function(idConta, valor, operacao, callBack) {
+    var oConta = new Conta();
+    oConta.findById(idConta, function(oConta) {
+        if (oConta.saldo == null) {
+            oConta.saldo = 0;
+        }
+        if (operacao == '+') {
+            oConta.saldo += valor;
+        } else {
+            oConta.saldo -= valor;
+        }
+        oConta.save(function() {
+            callBack();
+        });
+    });
+};
+
 // Tipo de conta
 Conta.TIPO_DEBITO = 0;
 Conta.TIPO_CREDITO = 1;

@@ -65,13 +65,13 @@ ContaController = function () {
     this.carregaContas = function (onSuccess) {
         var oContas = new Conta();
         oContas.findAll('id>0', function (oContas) {
-            $('#listaContas').html("<tr><th>Conta</th><th>Saldo</th><tr>");
+            $('#listaContas').html("<tr><th></th><th>Conta</th><th>Saldo</th><th></th><tr>");
             for (var i in oContas) {
                 var oConta = oContas[i];
                 $('#listaContas').append(ContaHelper.showLinhaConta(oConta));
             }
-            $('.linhaConta').click(function () {
-               App.execute('conta/detalhesConta?id=' + $(this).attr('id_conta'));
+            $('.btnEditar').click(function () {
+               App.execute('conta/detalhesConta?id=' + $(this).parent().parent().attr('id_conta'));
             });
         });
     };

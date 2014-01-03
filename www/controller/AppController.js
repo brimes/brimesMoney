@@ -22,9 +22,16 @@ AppController = function() {
             $('#dataTransacao').val(App.converteData(App.getCurrentDate(), 'yyyy-mm-dd', 'dd/mm/yyyy'));
             $('#valorTransacao').focus();
             oThis.carregarContas();
-            oThis.carregarBeneficiarios();
-            oThis.carregarCategorias();
-            $('#btnSalvar').click(function() {
+            oThis.carregarBeneficiarios($('#beneficiario').val());
+            oThis.carregarCategorias($('#categoria').val());
+            $('#beneficiario').keyup(function () {
+                oThis.carregarBeneficiarios($('#beneficiario').val());
+            });
+            $('#categoria').keyup(function () {
+                oThis.carregarCategorias($('#categoria').val());
+            });
+            $('#btnSalvar').click(function(e) {
+                e.stopPropagation();
                 var podeSalvar = true;
                 if (!Util.validaCamposObrigatorios()) {
                     return false;
@@ -36,21 +43,28 @@ AppController = function() {
                 if (!podeSalvar) {
                     return true;
                 }
+                $(this).attr("disabled", "disabled");
                 oThis.adicionaTransacao({
                     data: $('#dataTransacao').val(),
                     valor: $('#valorTransacao').val(),
                     baneficiario: $('#beneficiario').val(),
                     categoria: $('#categoria').val(),
                     conta: $('#contas').find('.selecionado').attr('id_conta')
-                })
+                }, function () {
+                   App.execute('conta/index'); 
+                });
             });
         });
     };
 
     // Funções privadas - Utilizada somente nesse controller (pelo menos deveria)
-    this.carregarBeneficiarios = function() {
+    this.carregarBeneficiarios = function(filtro) {
         var oBeneficiario = new Beneficiario();
-        oBeneficiario.buscaPorRelevancia('', function(arrayBeneficiarios) {
+        if (filtro != '') {
+            filtro = "descricao like '%" + filtro + "%'";
+        }
+        oBeneficiario.buscaPorRelevancia(filtro, function(arrayBeneficiarios) {
+            $('#listaBeneficiarios').html('');
             for (var i in arrayBeneficiarios) {
                 var oResult = arrayBeneficiarios[i];
                 $('#listaBeneficiarios').append("<li><a href=\"#\">" + oResult.DESCRICAO + "</a></li>")
@@ -62,9 +76,13 @@ AppController = function() {
         });
     };
 
-    this.carregarCategorias = function() {
+    this.carregarCategorias = function(filtro) {
         var oCategoria = new Categoria();
-        oCategoria.buscaPorRelevancia('', function(arrayCategorias) {
+        if (filtro != '') {
+            filtro = "descricao like '%" + filtro + "%'";
+        }
+        oCategoria.buscaPorRelevancia(filtro, function(arrayCategorias) {
+            $('#listaCategorias').html('');
             for (var i in arrayCategorias) {
                 var oResult = arrayCategorias[i];
                 $('#listaCategorias').append("<li><a href=\"#\">" + oResult.DESCRICAO + "</a></li>")
@@ -95,7 +113,7 @@ AppController = function() {
 
     };
 
-    this.adicionaTransacao = function(jDados) {
+    this.adicionaTransacao = function(jDados, onSuccess) {
         Beneficiario.getId(jDados.baneficiario, function(idBeneficiario) {
             Categoria.getId(jDados.categoria, function(idCategoria) {
                 var oTransacao = new Transacao();
@@ -107,13 +125,12 @@ AppController = function() {
                 oTransacao.save(function() {
                     Categoria.acrescentaNumeroTransacoes(idCategoria);
                     Beneficiario.acrescentaNumeroTransacoes(idBeneficiario, idCategoria);
-                    Conta.atualizaSaldo(jDados.conta, jDados.valor);
-                    alert('salvo com sucesso.');
+                    Conta.atualizaSaldo(jDados.conta, jDados.valor, '-', function () {
+                        onSuccess();
+                    });
                 });
             });
         });
-        App.debug(jDados);
-
     };
 
 };

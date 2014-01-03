@@ -15,6 +15,7 @@ Beneficiario = function() {
             table: this.table,
             where: filtro,
             order: "total_transacoes desc",
+            limit: 5
         }, function(results) {
             var dadosRetorno = new Array();
             for (i in results) {

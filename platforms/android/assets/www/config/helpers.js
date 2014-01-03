@@ -1,2 +1,0 @@
-var configHelpers = new Array(
-);

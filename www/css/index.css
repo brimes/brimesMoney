@@ -32,4 +32,18 @@
 .selecionado {
     background-color: #FFF07D !important;
 }
+
+.btnTable {
+    font-size: 20px;
+}
+
+.credito {
+    font-size: 20px;
+    color: #0000FF;
+}
+
+.debito {
+    font-size: 20px;
+    color: #00FF00;
+}
     
