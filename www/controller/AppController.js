@@ -16,11 +16,18 @@ AppController = function() {
         });
     };
 
-    this.actionNovoPagamento = function() {
+    this.actionNovaTransacao = function(param) {
         var oThis = this;
-        App.changeView('index', 'Nova transação - Pagamento', function() {
+        var tituloPagina = '<span class=\"glyphicon glyphicon-circle-arrow-down red\"></span> Despesa';
+        if (param.tipo == 'RECEITA') {
+            tituloPagina = '<span class=\"glyphicon glyphicon-circle-arrow-up blue\"></span> Receita';
+        } 
+        App.changeView('index', tituloPagina, function() {
             $('#dataTransacao').val(App.converteData(App.getCurrentDate(), 'yyyy-mm-dd', 'dd/mm/yyyy'));
             $('#valorTransacao').focus();
+            if (param.tipo == 'RECEITA') {
+                $('#beneficiario').attr('placeholder', 'Pagador');
+            }
             oThis.carregarContas();
             oThis.carregarBeneficiarios($('#beneficiario').val());
             oThis.carregarCategorias($('#categoria').val());
@@ -44,11 +51,12 @@ AppController = function() {
                     return true;
                 }
                 $(this).attr("disabled", "disabled");
-                oThis.adicionaTransacao({
+                Transacao.adicionaTransacao({
                     data: $('#dataTransacao').val(),
                     valor: $('#valorTransacao').val(),
                     baneficiario: $('#beneficiario').val(),
                     categoria: $('#categoria').val(),
+                    tipo: ((param.tipo == 'RECEITA') ? Transacao.CREDITO : Transacao.DEBITO),
                     conta: $('#contas').find('.selecionado').attr('id_conta')
                 }, function () {
                    App.execute('conta/index'); 
@@ -65,11 +73,17 @@ AppController = function() {
         }
         oBeneficiario.buscaPorRelevancia(filtro, function(arrayBeneficiarios) {
             $('#listaBeneficiarios').html('');
+            $('#listaBeneficiarios').show();
             for (var i in arrayBeneficiarios) {
                 var oResult = arrayBeneficiarios[i];
-                $('#listaBeneficiarios').append("<li><a href=\"#\">" + oResult.DESCRICAO + "</a></li>")
+                $('#listaBeneficiarios').append("<li><a href=\"#\" id_ulima_categoria='" + oResult.ID_ULTIMA_CATEGORIA + "'>" + oResult.DESCRICAO + "</a></li>")
             }
             $('#listaBeneficiarios a').click(function() {
+                var oCategoria = new Categoria();
+                oCategoria.findById($(this).attr('id_ulima_categoria'), function (oCategoria) {
+                    $('#categoria').val(oCategoria.descricao);
+                    $("#listaCategorias").hide();
+                });
                 $('#beneficiario').val($(this).text());
                 $(this).parent().parent().hide();
             });
@@ -83,6 +97,7 @@ AppController = function() {
         }
         oCategoria.buscaPorRelevancia(filtro, function(arrayCategorias) {
             $('#listaCategorias').html('');
+            $('#listaCategorias').show();
             for (var i in arrayCategorias) {
                 var oResult = arrayCategorias[i];
                 $('#listaCategorias').append("<li><a href=\"#\">" + oResult.DESCRICAO + "</a></li>")
@@ -111,26 +126,6 @@ AppController = function() {
             });
         });
 
-    };
-
-    this.adicionaTransacao = function(jDados, onSuccess) {
-        Beneficiario.getId(jDados.baneficiario, function(idBeneficiario) {
-            Categoria.getId(jDados.categoria, function(idCategoria) {
-                var oTransacao = new Transacao();
-                oTransacao.data = jDados.data;
-                oTransacao.valor = jDados.valor;
-                oTransacao.id_beneficiario = idBeneficiario;
-                oTransacao.id_categoria = idCategoria;
-                oTransacao.id_conta = jDados.conta;
-                oTransacao.save(function() {
-                    Categoria.acrescentaNumeroTransacoes(idCategoria);
-                    Beneficiario.acrescentaNumeroTransacoes(idBeneficiario, idCategoria);
-                    Conta.atualizaSaldo(jDados.conta, jDados.valor, '-', function () {
-                        onSuccess();
-                    });
-                });
-            });
-        });
     };
 
 };

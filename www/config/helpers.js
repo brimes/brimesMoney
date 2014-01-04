@@ -1,3 +1,4 @@
 var configHelpers = new Array(
-  {"nome" : "conta"}
+  {"nome" : "conta"},
+  {"nome" : "util"}
 );

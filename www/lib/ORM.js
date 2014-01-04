@@ -16,9 +16,9 @@ ORM.migrate = function(modelo, onSuccess) {
                 var row = results.rows.item(i);
                 dadosTabela.push(row);
             }
-            dbSQL.execFunction(function (tx) {
+            dbSQL.execFunction(function(tx) {
                 var table = modelo.table.toUpperCase();
-                var tableTmp = modelo.table.toUpperCase() + "_temp"; 
+                var tableTmp = modelo.table.toUpperCase() + "_temp";
                 App.debug("Renomeando tabela de " + table + " para " + tableTmp);
                 tx.executeSql("ALTER TABLE " + table + " RENAME TO " + tableTmp);
 
@@ -49,7 +49,7 @@ ORM.migrate = function(modelo, onSuccess) {
                             } else {
                                 valoresInsert += regitroTabela[campo];
                             }
-                            
+
                         }
                     }
                     var sqlInsert = "INSERT INTO " + table + "( " + camposInsert + " ) values (" + valoresInsert + ")";
@@ -57,14 +57,14 @@ ORM.migrate = function(modelo, onSuccess) {
                 }
                 tx.executeSql("DROP TABLE IF EXISTS " + tableTmp);
                 onSuccess();
-            });    
+            });
         }
-    }, function () {
+    }, function() {
         ORM.dropTable(modelo);
         ORM.createTable(modelo);
         onSuccess();
     });
-    
+
 };
 
 ORM.createTable = function(modelo, onSuccess) {
@@ -100,7 +100,7 @@ ORM.select = function(objParams, onSucess, onError) {
     if (objParams.limit) {
         sql += " LIMIT " + objParams.limit;
     }
-    
+
     if (objParams.offset) {
         sql += " OFFSET " + objParams.offset;
     }
@@ -127,11 +127,11 @@ ORM.insert = function(model, onSuccess, onError) {
     var valores = "";
     var vlCampo = "";
     if (typeof model.id === 'undefined') {
-        var novoId = App.getConfig('seq_' + model.table);        
+        var novoId = App.getConfig('seq_' + model.table);
         if (!novoId) {
             novoId = 1;
         } else {
-            novoId = parseInt(novoId) + 1; 
+            novoId = parseInt(novoId) + 1;
         }
         App.setConfig('seq_' + model.table, novoId);
         model.id = novoId;
@@ -147,8 +147,8 @@ ORM.insert = function(model, onSuccess, onError) {
         if (valores !== "") {
             valores += ",";
         }
-        if ((typeof vlCampo === 'undefined') || (vlCampo == null)) { 
-           valores += 'null';
+        if ((typeof vlCampo === 'undefined') || (vlCampo == null)) {
+            valores += 'null';
         } else {
             if (model.columns[campo] !== "text") {
                 valores += vlCampo;
@@ -156,14 +156,14 @@ ORM.insert = function(model, onSuccess, onError) {
                 valores += "'" + vlCampo + "'";
             }
         }
-        
+
     }
     var sql = "INSERT INTO " + model.table + " ( ";
     sql += campos;
     sql += ") VALUES ( ";
     sql += valores;
     sql += ")";
-    dbSQL.exec(sql, function () {
+    dbSQL.exec(sql, function() {
         onSuccess(model);
     }, onError);
 };
@@ -173,23 +173,25 @@ ORM.update = function(model, onSucess, onError) {
     var vlCampo = "";
     for (var campo in model.columns) {
         eval("vlCampo = model." + campo + ";");
-        if (valores !== "") {
-            valores += ",";
-        }
-        if ((typeof vlCampo === 'undefined') || (vlCampo == null)) { 
-           vlCampo = 'null';
-        } else {
-            if (model.columns[campo] === "text") {
-                vlCampo = "'" + vlCampo + "'";
+        if (campo != 'id' && typeof vlCampo !== 'undefined') {
+            if (valores !== "") {
+                valores += ",";
             }
+            if (vlCampo == null) {
+                vlCampo = 'null';
+            } else {
+                if (model.columns[campo] === "text") {
+                    vlCampo = "'" + vlCampo + "'";
+                }
+            }
+            valores += campo.toUpperCase() + ' = ' + vlCampo;
         }
-        valores += campo.toUpperCase() + ' = ' + vlCampo;
-        
+
     }
     var sql = "UPDATE " + model.table + " SET ";
     sql += valores;
     sql += " WHERE ID = " + model.id;
-    dbSQL.exec(sql, function () {
+    dbSQL.exec(sql, function() {
         if (typeof onSucess != 'undefined') {
             onSucess(model);
         }
@@ -211,7 +213,7 @@ ORM.updateAll = function(model, condition, onSucess, onError) {
     var vlCampo = "";
     for (var campo in model.columns) {
         eval("vlCampo = model." + campo + ";");
-        if (typeof vlCampo !== 'undefined') { 
+        if (typeof vlCampo !== 'undefined') {
             if (valores !== "") {
                 valores += ",";
             }

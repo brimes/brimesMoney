@@ -61,6 +61,32 @@ ContaController = function () {
             });
         });
     };
+  
+    this.actionTransacoes = function (params) {
+        var oThis = this;
+        App.changeView('transacoes', 'Transações', function () {
+            oThis.carregaTransacoes(params);
+            oThis.atualizaSaldo(params.idConta);
+        });
+        
+    };
+    
+    this.atualizaSaldo = function (idConta) {
+        var oConta = new Conta();
+        oConta.findById(idConta, function (oConta) {
+            $('#saldo').html(UtilHelper.toValor(oConta.saldo));
+        });
+    };
+    
+    this.carregaTransacoes = function (params) {
+        Transacao.buscaTransacoes('id_conta = ' + params.idConta, function (oTransacoes) {
+           for (var i in oTransacoes) {
+               var oTransacao = oTransacoes[i];
+               $('#transacoes').append(ContaHelper.showLiTransacao(oTransacao));
+           } 
+           $(window).scrollTop($(document).height());
+        });
+    };
     
     this.carregaContas = function (onSuccess) {
         var oContas = new Conta();
@@ -70,6 +96,9 @@ ContaController = function () {
                 var oConta = oContas[i];
                 $('#listaContas').append(ContaHelper.showLinhaConta(oConta));
             }
+            $('.linhaConta').click(function () {
+               App.execute('conta/transacoes?idConta=' + $(this).attr('id_conta'));
+            });
             $('.btnEditar').click(function () {
                App.execute('conta/detalhesConta?id=' + $(this).parent().parent().attr('id_conta'));
             });
@@ -80,7 +109,7 @@ ContaController = function () {
         var oConta = new Conta();
         oConta.findById(idConta, function (oConta) {
             $('#descricaoConta').val(oConta.descricao);
-            $('#saldoInicial').val(oConta.saldo);
+            $('#saldoInicial').val(oConta.saldo_inicial);
             $('#diaVencimento').val(oConta.dia_vencimento);
             $('#limiteCredito').val(oConta.limite);
             $(".btn_tipo").each(function () {

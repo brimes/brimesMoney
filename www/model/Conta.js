@@ -26,7 +26,6 @@ Conta.getTotaldeContas = function(onSuccess, onError) {
             onError();
         }
     });
-
 };
 
 Conta.atualizaSaldo = function(idConta, valor, operacao, callBack) {
@@ -35,8 +34,8 @@ Conta.atualizaSaldo = function(idConta, valor, operacao, callBack) {
         if (oConta.saldo == null) {
             oConta.saldo = 0;
         }
-        if (operacao == '+') {
-            oConta.saldo += valor;
+        if (operacao == 'C') {
+            oConta.saldo = (parseFloat(oConta.saldo) + parseFloat(valor));
         } else {
             oConta.saldo -= valor;
         }
