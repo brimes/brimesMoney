@@ -221,12 +221,24 @@ var App = {
         });
     },
     ready: function() {
-        $(".btn_menu").click(function () {
+        $(".btn_menu").on('touchstart', function(event) {
+            event.stopPropagation(); 
+            event.preventDefault();
             var action = $(this).attr('action');
             if (action == 'migrate') {
-                dbSQL.migrate(function () {
+                dbSQL.migrate(function() {
                     alert('migrate OK');
                 });
+            } else if (action == 'toggleMenu') {
+                if ($(this).children('span').hasClass('glyphicon-chevron-up')) {
+                    $(this).children('span').removeClass('glyphicon-chevron-up');
+                    $(this).children('span').addClass('glyphicon-chevron-down');
+                    $('#menuOpcoes').slideDown('fast');
+                } else {
+                    $(this).children('span').addClass('glyphicon-chevron-up');
+                    $(this).children('span').removeClass('glyphicon-chevron-down');
+                    $('#menuOpcoes').slideUp('fast');
+            }
             } else {
                 App.execute(action);
             }

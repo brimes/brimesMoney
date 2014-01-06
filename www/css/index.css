@@ -1,9 +1,12 @@
+body {
+    background-color: #D1D1D1;
+}
 .btn_menu {
     margin: 2px;
 }
 
 .navbar {
-    background-color: #FFF07D;
+    background-color: #686868;
 }
 
 .page-header {
@@ -66,4 +69,12 @@
 
 .destaque_credito, .blue {
     color: #00F;
+}
+
+#menuOpcoes {
+    margin: 10px;
+}
+
+.opcao_menu {
+    width: 100%;
 }
