@@ -7,9 +7,10 @@ AppController = function() {
                 App.execute('app/index');
             });
         }
+        
         Conta.getTotaldeContas(function(totalContas) {
             if (totalContas > 0) {
-                App.execute('conta/index');
+                App.execute(App.getConfig('ultima_action'));
             } else {
                 App.execute('conta/detalhesConta?id=0');
             }
@@ -67,6 +68,7 @@ AppController = function() {
 
     // Funções privadas - Utilizada somente nesse controller (pelo menos deveria)
     this.carregarBeneficiarios = function(filtro) {
+        var oThis = this;
         var oBeneficiario = new Beneficiario();
         if (filtro != '') {
             filtro = "descricao like '%" + filtro + "%'";
@@ -83,6 +85,7 @@ AppController = function() {
                 oCategoria.findById($(this).attr('id_ulima_categoria'), function (oCategoria) {
                     $('#categoria').val(oCategoria.descricao);
                     $("#listaCategorias").hide();
+                    oThis.atualizaDisponivelParaCategoria(oCategoria.id);
                 });
                 $('#beneficiario').val($(this).text());
                 $(this).parent().parent().hide();
@@ -91,6 +94,7 @@ AppController = function() {
     };
 
     this.carregarCategorias = function(filtro) {
+        var oThis = this;
         var oCategoria = new Categoria();
         if (filtro != '') {
             filtro = "descricao like '%" + filtro + "%'";
@@ -100,14 +104,26 @@ AppController = function() {
             $('#listaCategorias').show();
             for (var i in arrayCategorias) {
                 var oResult = arrayCategorias[i];
-                $('#listaCategorias').append("<li><a href=\"#\">" + oResult.DESCRICAO + "</a></li>")
+                $('#listaCategorias').append("<li><a href=\"#\" id_categoria=\"" + oResult.ID + "\">" + oResult.DESCRICAO + "</a></li>")
             }
             $('#listaCategorias a').click(function() {
                 $('#categoria').val($(this).text());
                 $(this).parent().parent().hide();
+                oThis.atualizaDisponivelParaCategoria($(this).attr('id_categoria'));
             });
             
         });
+    };
+    
+    this.atualizaDisponivelParaCategoria = function (idCategoria) {
+        Categoria.getSaldoDisponivel(idCategoria, function (saldo) {
+            if (saldo == null) {
+                $('#msgDisponivelCategoria').hide();
+            } else {
+                $('#msgDisponivelCategoria').show();
+                $('#diponivelNaCategoria').html(saldo);
+            }
+        })
     };
 
     this.carregarContas = function() {

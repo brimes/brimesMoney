@@ -40,29 +40,11 @@
 
         <nav class="navbar navbar-default navbar-fixed-bottom barra_opcoes" role="navigation">
             <div id="menuOpcoes" style="display:none">
-                <button type="button" class="btn btn-default btn_menu opcao_menu" action="app/novaTransacao?tipo=DESPESA">
-                    <span class="glyphicon glyphicon-tag"></span> Categorias
-                </button>
-                <button type="button" class="btn btn-default btn_menu opcao_menu" action="app/novaTransacao?tipo=DESPESA">
-                    <span class="glyphicon glyphicon-user"></span> Beneficiários
-                </button>
-                <button type="button" class="btn btn-default btn_menu opcao_menu" action="migrate">
-                    <span class="glyphicon glyphicon-user"></span> Migrate
-                </button>
             </div>
-            <div>
-                <button type="button" class="btn btn-default btn-lg btn_menu" action="app/novaTransacao?tipo=DESPESA">
-                    <span class="glyphicon glyphicon-circle-arrow-down red"></span>
-                </button>
-                <button type="button" class="btn btn-default btn-lg btn_menu" action="app/novaTransacao?tipo=RECEITA">
-                    <span class="glyphicon glyphicon-circle-arrow-up blue"></span>
-                </button>
-                <button type="button" class="btn btn-default btn-lg btn_menu" action="conta/index">
-                    <span class="glyphicon glyphicon-list-alt"></span>
-                </button>
-                <button type="button" class="btn btn-default btn-lg btn_menu pull-right" action="toggleMenu">
+            <div id="btns_tela_inicial">
+                <span class="btn btn_menu btn_navbar pull-right" id="btnMenuToggle" action="toggleMenu">
                     <span class="glyphicon glyphicon-chevron-up"></span>
-                </button>
+                </span>
             </div>
         </nav>        
         <script>

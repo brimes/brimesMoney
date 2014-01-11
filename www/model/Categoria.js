@@ -5,6 +5,7 @@ Categoria = function() {
         descricao: "text",
         total_transacoes: 'int',
         ultima_transacao: 'text',
+        planejado: 'float',
         sincronizado: 'int'
     };
     
@@ -66,3 +67,10 @@ Categoria.acrescentaNumeroTransacoes = function(idCategoria, onSuccess) {
         oCat.save(onSuccess);
     });
 };
+Categoria.getSaldoDisponivel = function (idCategoria, callBack) {
+    var oCategoria = new Categoria();
+    oCategoria.findById(idCategoria, function (oCategoria) {
+        callBack(oCategoria.planejado);
+    });
+};
+

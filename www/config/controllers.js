@@ -1,4 +1,5 @@
 var configControllers = [
   {"nome" : "app"},
-  {"nome": "conta"}
+  {"nome": "conta"},
+  {"nome": "categoria"}
 ];

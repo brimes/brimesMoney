@@ -36,7 +36,6 @@ Transacao.adicionaTransacao = function(jDados, onSuccess) {
         });
     });
 };
-
 Transacao.buscaTransacoes = function(filtro, onSuccess, onError) {
     ORM.select({
         select: 't.*, b.descricao as BENEFICIARIO, c.descricao as CATEGORIA',
@@ -51,3 +50,18 @@ Transacao.buscaTransacoes = function(filtro, onSuccess, onError) {
     });
 
 };
+Transacao.getTotalGastoNoPeriodoParaCategoria = function (idCategoria, callBack) {
+    ORM.select({
+        select: 't.*',
+        table: 'transacao t',
+        where: "id_categoria = " + idCategoria + " AND (data <= '" +  + "')" 
+    }, function(results) {
+        onSuccess(results);
+    }, function() {
+        if (typeof onError !== 'undefined') {
+            onError();
+        }
+    });
+
+};
+

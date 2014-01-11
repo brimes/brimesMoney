@@ -1,6 +1,14 @@
 var App = {
     callbackPage: function() {
     },
+    opcoesMenu: new Array(
+            {label: "Nova dispesa", icon: "glyphicon-circle-arrow-down red", action: "app/novaTransacao?tipo=DESPESA", inicial: true},
+    {label: "Nova receita", icon: "glyphicon-circle-arrow-up blue", action: "app/novaTransacao?tipo=RECEITA", inicial: true},
+    {label: "Contas", icon: "glyphicon-list-alt", action: "conta/index", inicial: true},
+    {label: "Categorias", icon: "glyphicon-tag", action: "categoria/index", inicial: false},
+    {label: "Beneficiários", icon: "glyphicon-user", action: "", inicial: false},
+    {label: "Migrate", icon: "", action: "migrate", inicial: false}
+    ),
     dadosMove: {},
 //    this.onBackButton = null;
     actionViewAnterior: "",
@@ -221,8 +229,20 @@ var App = {
         });
     },
     ready: function() {
+        for (var i in this.opcoesMenu) {
+            var optMenu = this.opcoesMenu[i];
+            if (optMenu.inicial == true) {
+                $('#btns_tela_inicial').append("<span class=\"btn btn_menu btn_navbar\" action=\"" + optMenu.action + "\"> "
+                        + "<span class=\"glyphicon " + optMenu.icon + "\"></span>"
+                        + "</span>");
+            } else {
+                $('#menuOpcoes').append("<button type=\"button\" class=\"btn btn-default btn_menu opcao_menu\" action=\"" + optMenu.action + "\">"
+                        + "   <span class=\"glyphicon " + optMenu.icon + "\"></span> " + optMenu.label + ""
+                        + "</button>");
+            }
+        }
         $(".btn_menu").on('touchstart', function(event) {
-            event.stopPropagation(); 
+            event.stopPropagation();
             event.preventDefault();
             var action = $(this).attr('action');
             if (action == 'migrate') {
@@ -238,8 +258,11 @@ var App = {
                     $(this).children('span').addClass('glyphicon-chevron-up');
                     $(this).children('span').removeClass('glyphicon-chevron-down');
                     $('#menuOpcoes').slideUp('fast');
-            }
+                }
             } else {
+                $("#btnMenuToggle").children('span').addClass('glyphicon-chevron-up');
+                $("#btnMenuToggle").children('span').removeClass('glyphicon-chevron-down');
+                $('#menuOpcoes').slideUp('fast');
                 App.execute(action);
             }
         });
