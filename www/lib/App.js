@@ -9,6 +9,7 @@ var App = {
     {label: "Beneficiários", icon: "glyphicon-user", action: "", inicial: false},
     {label: "Migrate", icon: "", action: "migrate", inicial: false}
     ),
+    aMesesExtenso: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"],
     dadosMove: {},
 //    this.onBackButton = null;
     actionViewAnterior: "",
@@ -208,18 +209,12 @@ var App = {
 //        }
 //    };
 //
-//    this.close = function() {
-//        if (this.sincronizando === true) {
-//            alert('Você não pode desconectar enquanto estiver sincronizando. Aguarde o final da sincronização.');
-//            return;
-//        }
-//
-//        if (confirm("Deseja sair da aplicação?")) {
-//            QuesterApp.setConfig('ultima_action', "");
-//            navigator.app.exitApp();
-//        }
-//    };
-//
+    close: function() {
+        if (confirm("Deseja sair da aplicação?")) {
+            QuesterApp.setConfig('ultima_action', "");
+            navigator.app.exitApp();
+        }
+    },
     readyPage: function() {
         this.log('ready page');
         $(".link_action").unbind().click(function(e) {
@@ -240,6 +235,11 @@ var App = {
                         + "   <span class=\"glyphicon " + optMenu.icon + "\"></span> " + optMenu.label + ""
                         + "</button>");
             }
+        }
+        if (App.isAndroid()) {
+            $('#menuOpcoes').append("<button type=\"button\" class=\"btn btn-default btn_menu opcao_menu\" action=\"appClose\">"
+                    + "   <span class=\"glyphicon glyphicon-off\"></span> Encerrar"
+                    + "</button>");
         }
         $(".btn_menu").on('touchstart', function(event) {
             event.stopPropagation();
@@ -465,9 +465,9 @@ var App = {
 //        return QuesterApp.getConfig('imei');
 //    };
 //
-//    this.isAndroid = function() {
-//        return (navigator.userAgent.match(/Android/i));
-//    };
+    isAndroid: function() {
+        return (navigator.userAgent.match(/Android/i));
+    },
 //
 //    this.setNotificacao = function(msg) {
 //        $('#divNotificacao').find('span').html(msg);
@@ -519,6 +519,21 @@ var App = {
 
         return  this.getCurrentDate() + ' ' + hora + ':' + minuto + ':' + segundo;
 
+    },
+    dataPorExtenso: function(data) {
+        if (this.getCurrentDate() == data) {
+            return "Hoje";
+        }
+        var aData = data.split("-");
+        var aDataAtual = this.getCurrentDate().split("-");
+        var dataAtual = new Date();
+        
+        if (dataAtual.getFullYear() == aData[0]) {
+            return aData[2] + " de " + this.aMesesExtenso[parseInt(aData[1]) - 1];
+        } else {
+            return aData[2] + " de " + this.aMesesExtenso[parseInt(aData[1]) - 1] + "/" + aData[0];
+        }
+        
     }
 
 };

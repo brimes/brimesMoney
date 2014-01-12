@@ -55,8 +55,8 @@ AppController = function() {
                 Transacao.adicionaTransacao({
                     data: $('#dataTransacao').val(),
                     valor: $('#valorTransacao').val(),
-                    baneficiario: $('#beneficiario').val(),
-                    categoria: $('#categoria').val(),
+                    baneficiario: $('#beneficiario').val().trim(),
+                    categoria: $('#categoria').val().trim(),
                     tipo: ((param.tipo == 'RECEITA') ? Transacao.CREDITO : Transacao.DEBITO),
                     conta: $('#contas').find('.selecionado').attr('id_conta')
                 }, function () {

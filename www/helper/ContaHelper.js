@@ -20,12 +20,9 @@ ContaHelper = {
     },
     showLiTransacao: function(dadosTransacao) {
         var htmlRet = "";
-        var aData = dadosTransacao.DATA + "";
-        aData = aData.split('-');
-        var dataResumida = aData[2] + '/' + aData[1];
+        var dataExtenso = App.dataPorExtenso(dadosTransacao.DATA);
         var destaque = (dadosTransacao.TIPO == Transacao.CREDITO) ? "destaque_credito" : "destaque_debito";
-        console.log(aData);
-        htmlRet += "<li class='lista_transacao' id_transacao='" + dadosTransacao.ID + "'>" + dataResumida + "<span class='pull-right " + destaque + "'>" + UtilHelper.toValor(dadosTransacao.VALOR) + "</span><br/>" + dadosTransacao.BENEFICIARIO + "</li>";
+        htmlRet += "<li class='lista_transacao' id_transacao='" + dadosTransacao.ID + "'><span class='dataExtenso'>" + dataExtenso + "</span><span class='pull-right " + destaque + "'>" + UtilHelper.toValor(dadosTransacao.VALOR) + "</span><br/>" + dadosTransacao.BENEFICIARIO + "</li>";
         return htmlRet;
     }
 };

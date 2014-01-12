@@ -124,3 +124,8 @@ body {
     background-color: #ddd;
     border-bottom: 1px solid #aaa;
 }
+
+.dataExtenso {
+    font-size: 13px;
+    font-style: italic;
+}

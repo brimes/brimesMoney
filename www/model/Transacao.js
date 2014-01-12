@@ -40,7 +40,8 @@ Transacao.buscaTransacoes = function(filtro, onSuccess, onError) {
     ORM.select({
         select: 't.*, b.descricao as BENEFICIARIO, c.descricao as CATEGORIA',
         table: 'transacao t JOIN categoria c ON c.id = t.id_categoria JOIN beneficiario b ON b.id = t.id_beneficiario',
-        where: filtro
+        where: filtro,
+        order: "t.data"
     }, function(results) {
         onSuccess(results);
     }, function() {
