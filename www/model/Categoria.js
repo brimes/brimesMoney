@@ -70,7 +70,14 @@ Categoria.acrescentaNumeroTransacoes = function(idCategoria, onSuccess) {
 Categoria.getSaldoDisponivel = function (idCategoria, callBack) {
     var oCategoria = new Categoria();
     oCategoria.findById(idCategoria, function (oCategoria) {
-        callBack(oCategoria.planejado);
+        if (oCategoria.planejado == null) {
+            callBack(null);
+        } else {
+            Transacao.getTotalGastoNoPeriodoParaCategoria(oCategoria.id, function (totalGasto) {
+                var saldo = parseFloat(oCategoria.planejado) - parseFloat(totalGasto);
+                callBack(saldo);
+            });
+        }
     });
 };
 

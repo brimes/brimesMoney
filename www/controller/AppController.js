@@ -121,9 +121,9 @@ AppController = function() {
                 $('#msgDisponivelCategoria').hide();
             } else {
                 $('#msgDisponivelCategoria').show();
-                $('#diponivelNaCategoria').html(saldo);
+                $('#diponivelNaCategoria').html(UtilHelper.toValor(saldo));
             }
-        })
+        }); 
     };
 
     this.carregarContas = function() {

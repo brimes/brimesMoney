@@ -51,16 +51,22 @@ Transacao.buscaTransacoes = function(filtro, onSuccess, onError) {
 
 };
 Transacao.getTotalGastoNoPeriodoParaCategoria = function (idCategoria, callBack) {
+    var dataAtual = App.getCurrentDate()
+    var dataAtualInicio = dataAtual.substr(0, 7) + "-01";
+    var dataAtualFim = dataAtual.substr(0, 7) + "-31";
     ORM.select({
         select: 't.*',
         table: 'transacao t',
-        where: "id_categoria = " + idCategoria + " AND (data <= '" +  + "')" 
+        where: "id_categoria = " + idCategoria + " AND (data >= '" + dataAtualInicio + "' AND data <= '" + dataAtualFim + "')" 
     }, function(results) {
-        onSuccess(results);
-    }, function() {
-        if (typeof onError !== 'undefined') {
-            onError();
+        var valorTotal = 0;
+        for (var i in results) {
+            var res = results[i];
+            valorTotal += parseFloat(res.VALOR);
         }
+        callBack(valorTotal);
+    }, function() {
+        callBack(0);
     });
 
 };

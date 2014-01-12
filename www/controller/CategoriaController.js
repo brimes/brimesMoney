@@ -2,8 +2,8 @@ CategoriaController = function () {
     this.actionIndex = function() {
         var oThis = this;
         App.changeView('index', 'Categorias', function () {
-            $('#btnNovaConta').click(function () {
-                App.execute('conta/detalhesConta?id=0');
+            $('#btnNovaCategoria').click(function () {
+                App.execute('categoria/detalhes?id=0');
             });
             oThis.carregaCategorias();
         });
@@ -49,20 +49,30 @@ CategoriaController = function () {
     };
     
     this.carregaCategorias = function () {
+        var oThis = this;
         var oCategorias = new Categoria();
         oCategorias.findAll({
             order: "descricao" 
         }, function (oCategorias) {
-            $('#tblCategorias').html("<tr><th>Categoria</th><th>Planejado</th><tr>");
+            $('#tblCategorias').html("<tr><th>Categoria</th><th>Planejado</th><th>Disponível</th><tr>");
             for (var i in oCategorias) {
                 var oCategoria = oCategorias[i];
                 $('#tblCategorias').append(CategoriaHelper.showCategoriaTr(oCategoria));
+                oThis.atualizaSaldoDaCategoria(oCategoria.id);
             }
             $('.linhaCategoria').click(function () {
                App.execute('categoria/detalhes?id=' + $(this).attr('id_categoria')) 
             });
         });
         
+    };
+    
+    this.atualizaSaldoDaCategoria = function (idCategoria) {
+        Categoria.getSaldoDisponivel(idCategoria, function (saldo) {
+            if (saldo != null) {
+                $('#disponivel_' + idCategoria).html(UtilHelper.toValor(saldo));
+            }
+        });
     };
     
 };
