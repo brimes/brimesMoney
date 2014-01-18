@@ -10,7 +10,11 @@ AppController = function() {
         
         Conta.getTotaldeContas(function(totalContas) {
             if (totalContas > 0) {
-                App.execute(App.getConfig('ultima_action'));
+                if (App.getConfig('ultima_action') == "") {
+                    App.execute("conta/index");
+                } else {
+                    App.execute(App.getConfig('ultima_action'));
+                }
             } else {
                 App.execute('conta/detalhesConta?id=0');
             }

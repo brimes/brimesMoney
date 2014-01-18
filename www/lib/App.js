@@ -6,7 +6,7 @@ var App = {
     {label: "Nova receita", icon: "glyphicon-circle-arrow-up blue", action: "app/novaTransacao?tipo=RECEITA", inicial: true},
     {label: "Contas", icon: "glyphicon-list-alt", action: "conta/index", inicial: true},
     {label: "Categorias", icon: "glyphicon-tag", action: "categoria/index", inicial: false},
-    {label: "Beneficiários", icon: "glyphicon-user", action: "", inicial: false},
+    {label: "Transações Recorrentes", icon: "glyphicon-th-list", action: "recorrente/index", inicial: false},
     {label: "Migrate", icon: "", action: "migrate", inicial: false}
     ),
     aMesesExtenso: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"],
@@ -211,7 +211,7 @@ var App = {
 //
     close: function() {
         if (confirm("Deseja sair da aplicação?")) {
-            QuesterApp.setConfig('ultima_action', "");
+            this.setConfig('ultima_action', "");
             navigator.app.exitApp();
         }
     },
@@ -249,6 +249,8 @@ var App = {
                 dbSQL.migrate(function() {
                     alert('migrate OK');
                 });
+            } else if (action == 'appClose') {
+                App.close();
             } else if (action == 'toggleMenu') {
                 if ($(this).children('span').hasClass('glyphicon-chevron-up')) {
                     $(this).children('span').removeClass('glyphicon-chevron-up');

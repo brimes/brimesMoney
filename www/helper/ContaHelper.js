@@ -22,7 +22,7 @@ ContaHelper = {
         var htmlRet = "";
         var dataExtenso = App.dataPorExtenso(dadosTransacao.DATA);
         var destaque = (dadosTransacao.TIPO == Transacao.CREDITO) ? "destaque_credito" : "destaque_debito";
-        htmlRet += "<li class='lista_transacao' id_transacao='" + dadosTransacao.ID + "'><span class='dataExtenso'>" + dataExtenso + "</span><span class='pull-right " + destaque + "'>" + UtilHelper.toValor(dadosTransacao.VALOR) + "</span><br/>" + dadosTransacao.BENEFICIARIO + "</li>";
+        htmlRet += "<li class='lista_transacao list-group-item' id_transacao='" + dadosTransacao.ID + "'><span class='dataExtenso'>" + dataExtenso + "</span><span class='pull-right " + destaque + "'>" + UtilHelper.toValor(dadosTransacao.VALOR) + "</span><br/>" + dadosTransacao.BENEFICIARIO + "</li>";
         return htmlRet;
     }
 };
