@@ -137,3 +137,9 @@ body {
 .btn {
     margin-bottom: 5px;
 }
+
+.strip_text{
+    font-size: 0.8em;
+    text-overflow: ellipsis;
+    overflow: hidden;  
+}

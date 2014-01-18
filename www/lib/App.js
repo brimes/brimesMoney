@@ -529,13 +529,22 @@ var App = {
         var aData = data.split("-");
         var aDataAtual = this.getCurrentDate().split("-");
         var dataAtual = new Date();
-        
+
         if (dataAtual.getFullYear() == aData[0]) {
             return aData[2] + " de " + this.aMesesExtenso[parseInt(aData[1]) - 1];
         } else {
             return aData[2] + " de " + this.aMesesExtenso[parseInt(aData[1]) - 1] + "/" + aData[0];
         }
-        
+
+    },
+    toToggle: function(classToggle, onToogle) {
+        $(classToggle).click(function () {
+            $(classToggle).removeClass("selecionado");
+            $(this).addClass("selecionado");
+            if (typeof onToogle != 'undefined') {
+                onToogle(this);
+            }
+        });
     }
 
 };

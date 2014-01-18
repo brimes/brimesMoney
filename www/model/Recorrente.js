@@ -10,7 +10,7 @@ Recorrente = function() {
         total_parcelas: 'int',
         id_conta: 'text',
         tipo: 'text',
-        valor_aproximado: 'int',
+        valor_fixo: 'int',
         sincronizado: 'int'
     };
 };

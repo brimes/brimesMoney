@@ -1,4 +1,24 @@
 ContaHelper = {
+    campoContas: function(element) {
+        var oContas = new Conta();
+        oContas.findAll('id>0', function(oContas) {
+            var strPanelContas = "<div class='panel panel-default'>";
+            strPanelContas += "<div class='panel-heading'>Conta</div>";
+            strPanelContas += '<ul class="list-group">';
+            for (var i in oContas) {
+                var oConta = oContas[i];
+                strPanelContas += ContaHelper.showLinhaContaLi(oConta);
+            }
+            strPanelContas += '</ul></div>';
+            $(element).html(strPanelContas);
+            $(element).find('li').click(function() {
+                $(this).parent().children('li').each(function() {
+                    $(this).removeClass('selecionado');
+                });
+                $(this).addClass('selecionado');
+            });
+        });
+    },
     showLinhaConta: function(dadosConta) {
         var htmlRet = "";
         htmlRet += "<tr class='linhaConta' id_conta='" + dadosConta.id + "'>";
@@ -15,7 +35,7 @@ ContaHelper = {
     },
     showLinhaContaLi: function(dadosConta) {
         var htmlRet = "";
-        htmlRet += "<li id_conta='" + dadosConta.id + "'><a href='#'>" + dadosConta.descricao + "<span class='pull-right'>" + UtilHelper.toValor(dadosConta.saldo) + "</span></a></li>";
+        htmlRet += "<li class='list-group-item' id_conta='" + dadosConta.id + "'><span class='infoConta'>" + dadosConta.descricao + "<span class='pull-right'>" + UtilHelper.toValor(dadosConta.saldo) + "</span></span></li>";
         return htmlRet;
     },
     showLiTransacao: function(dadosTransacao) {

@@ -33,7 +33,7 @@ AppController = function() {
             if (param.tipo == 'RECEITA') {
                 $('#beneficiario').attr('placeholder', 'Pagador');
             }
-            oThis.carregarContas();
+            ContaHelper.campoContas('#contas');
             oThis.carregarBeneficiarios($('#beneficiario').val());
             oThis.carregarCategorias($('#categoria').val());
             $('#beneficiario').keyup(function () {
@@ -73,18 +73,8 @@ AppController = function() {
     // Funções privadas - Utilizada somente nesse controller (pelo menos deveria)
     this.carregarBeneficiarios = function(filtro) {
         var oThis = this;
-        var oBeneficiario = new Beneficiario();
-        if (filtro != '') {
-            filtro = "descricao like '%" + filtro + "%'";
-        }
-        oBeneficiario.buscaPorRelevancia(filtro, function(arrayBeneficiarios) {
-            $('#listaBeneficiarios').html('');
-            $('#listaBeneficiarios').show();
-            for (var i in arrayBeneficiarios) {
-                var oResult = arrayBeneficiarios[i];
-                $('#listaBeneficiarios').append("<li><a href=\"#\" id_ulima_categoria='" + oResult.ID_ULTIMA_CATEGORIA + "'>" + oResult.DESCRICAO + "</a></li>")
-            }
-            $('#listaBeneficiarios a').click(function() {
+        BeneficiarioHelper.carregaBeneficiarios('#listaBeneficiarios', filtro, function () {
+            $('#listaBeneficiarios li').click(function() {
                 var oCategoria = new Categoria();
                 oCategoria.findById($(this).attr('id_ulima_categoria'), function (oCategoria) {
                     $('#categoria').val(oCategoria.descricao);
@@ -92,27 +82,17 @@ AppController = function() {
                     oThis.atualizaDisponivelParaCategoria(oCategoria.id);
                 });
                 $('#beneficiario').val($(this).text());
-                $(this).parent().parent().hide();
+                $(this).parent().hide();
             });
         });
     };
 
     this.carregarCategorias = function(filtro) {
         var oThis = this;
-        var oCategoria = new Categoria();
-        if (filtro != '') {
-            filtro = "descricao like '%" + filtro + "%'";
-        }
-        oCategoria.buscaPorRelevancia(filtro, function(arrayCategorias) {
-            $('#listaCategorias').html('');
-            $('#listaCategorias').show();
-            for (var i in arrayCategorias) {
-                var oResult = arrayCategorias[i];
-                $('#listaCategorias').append("<li><a href=\"#\" id_categoria=\"" + oResult.ID + "\">" + oResult.DESCRICAO + "</a></li>")
-            }
-            $('#listaCategorias a').click(function() {
+        CategoriaHelper.carregaCategorias('#listaCategorias', filtro, function () {
+            $('#listaCategorias li').click(function() {
                 $('#categoria').val($(this).text());
-                $(this).parent().parent().hide();
+                $(this).parent().hide();
                 oThis.atualizaDisponivelParaCategoria($(this).attr('id_categoria'));
             });
             
@@ -128,24 +108,6 @@ AppController = function() {
                 $('#diponivelNaCategoria').html(UtilHelper.toValor(saldo));
             }
         }); 
-    };
-
-    this.carregarContas = function() {
-        var oContas = new Conta();
-        oContas.findAll('id>0', function(oContas) {
-            $('#contas').html("");
-            for (var i in oContas) {
-                var oConta = oContas[i];
-                $('#contas').append(ContaHelper.showLinhaContaLi(oConta));
-            }
-            $('#contas').find('a').click(function() {
-                $(this).parent().parent().children('li').each(function() {
-                    $(this).removeClass('selecionado');
-                });
-                $(this).parent().addClass('selecionado');
-            });
-        });
-
     };
 
 };
