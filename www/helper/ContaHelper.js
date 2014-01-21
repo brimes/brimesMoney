@@ -4,7 +4,7 @@ ContaHelper = {
         oContas.findAll('id>0', function(oContas) {
             var strPanelContas = "<div class='panel panel-default'>";
             strPanelContas += "<div class='panel-heading'>Conta</div>";
-            strPanelContas += '<ul class="list-group">';
+            strPanelContas += '<ul class="list-group" id="linhasContas">';
             for (var i in oContas) {
                 var oConta = oContas[i];
                 strPanelContas += ContaHelper.showLinhaContaLi(oConta);

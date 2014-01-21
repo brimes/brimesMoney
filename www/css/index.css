@@ -143,3 +143,9 @@ body {
     text-overflow: ellipsis;
     overflow: hidden;  
 }
+
+.editar li{
+    border: 1px dashed #000 !important;
+}
+
+

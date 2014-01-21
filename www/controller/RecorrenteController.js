@@ -21,38 +21,43 @@ RecorrenteController = function() {
                     $('#beneficiario').attr('placeholder', 'Beneficiário');
                 }
             });
-            oThis.carregarBeneficiarios($('#beneficiario').val());
-            oThis.carregarCategorias($('#categoria').val());
+            if (params.id == "0") {
+                oThis.carregarBeneficiarios($('#beneficiario').val());
+                oThis.carregarCategorias($('#categoria').val());
+            } else {
+                oThis.carregaDetalhesRocorrente(params.id);
+                $('#listaBeneficiarios').hide();
+                $('#listaCategorias').hide();
+            }
             $('#beneficiario').keyup(function () {
                 oThis.carregarBeneficiarios($('#beneficiario').val());
             });
             $('#categoria').keyup(function () {
                 oThis.carregarCategorias($('#categoria').val());
             });
-//            oThis.carregaDetalhesCategoria(params.id);
-//            $('#idCategoria').val(params.id);
-//            $('#btnVoltar').click(function () {
-//                App.execute('categoria/index');
-//            });
-//            $('#btnSalvar').click(function () {
-//                 if (!Util.validaCamposObrigatorios()) {
-//                    return false;
-//                }
-//                var oCategoria = new Categoria();
-//                if ($('#idCategoria').val() != 0) {
-//                    oCategoria.id = $('#idCategoria').val();
-//                    oCategoria.isNewRecord = false;
-//                } 
-//                oCategoria.descricao = $('#descricao').val();
-//                if ($('#planejamento').val() != "") {
-//                    oCategoria.planejado = $('#planejamento').val();
-//                }
-//                oCategoria.save(function () {
-//                    App.execute("categoria/index");
-//                }, function () {
-//                   alert("Erro ao salvar categoria."); 
-//                });
-//           });
+            $('#idRecorrente').val(params.id);
+            $('#btnVoltar').click(function () {
+                App.execute('recorrente/index');
+            });
+            $('#btnSalvar').click(function () {
+                 if (!Util.validaCamposObrigatorios()) {
+                    return false;
+                }
+                
+                Recorrente.adicionaAlteraRecorrente({
+                    id: $('#idRecorrente').val(),
+                    data: $('#dataTransacao').val(),
+                    valor: $('#valorTransacao').val(),
+                    baneficiario: $('#beneficiario').val().trim(),
+                    categoria: $('#categoria').val().trim(),
+                    tipo: (($('#tipo_transacao').find('.selecionado').attr('tipo') == Transacao.CREDITO) ? Transacao.CREDITO : Transacao.DEBITO),
+                    total_parcelas: $('#totalPercelas').val(),
+                    valor_fixo: $('#tipo_valor').find('.selecionado').attr('tipo'),
+                    conta: $('#contas').find('.selecionado').attr('id_conta')
+                }, function () {
+                   App.execute('recorrente/index'); 
+                });
+           });
         });
     };
     
@@ -86,6 +91,34 @@ RecorrenteController = function() {
     this.carregaDetalhesRocorrente = function(idRecorrente) {
         var oRecorrente = new Recorrente();
         oRecorrente.findById(idRecorrente, function(oRecorrente) {
+            $('#dataTransacao').val(App.converteData(oRecorrente.data, 'yyyy-mm-dd', 'dd/mm/yyyy'));
+            $('#valorTransacao').val(oRecorrente.valor);
+            $('#tipo_valor').find('.btn_valor').each(function () {
+               if ($(this).attr('tipo') == oRecorrente.valor_fixo) {
+                   $(this).addClass('selecionado');
+               } 
+            });
+            $('#tipo_transacao').find('.btn_tipo').each(function () {
+               if ($(this).attr('tipo') == oRecorrente.tipo) {
+                   $(this).addClass('selecionado');
+               } 
+            });
+            if (oRecorrente.total_parcelas >= 1) {
+                $('#totalPercelas').val(oRecorrente.total_parcelas);
+            }
+            $('#linhasContas').find('li').each(function () {
+               if ($(this).attr('id_conta') == oRecorrente.id_conta) {
+                   $(this).addClass('selecionado');
+               } 
+            });
+            var oBeneficiario = new Beneficiario();
+            oBeneficiario.findById(oRecorrente.id_beneficiario, function (oBeneficiario) {
+                $('#beneficiario').val(oBeneficiario.descricao);
+            });
+            var oCategoria = new Categoria();
+            oCategoria.findById(oRecorrente.id_categoria, function () {
+               $('#categoria').val(oCategoria.descricao); 
+            });
         });
     };
 
@@ -93,19 +126,42 @@ RecorrenteController = function() {
         var oThis = this;
         Recorrente.buscaRecorrentes("", function(oRecorrentes) {
             if (oRecorrentes.length == 0) {
-                $('#listaRecorrentes').html("<li class='list-group-item'>Nenhuma transação recorrente.</li>");
+                $('#listaRecorrentesDespesas').html("<li class='list-group-item'>Parabéns, nenhuma conta a pagar.</li>");
+                $('#listaRecorrentesReceitas').html("<li class='list-group-item'>Que pena! Nada a receber esse mês</li>");
                 return true;
             }
+            var contReceitas = 0;
+            var contDespesas = 0;
 
             for (var i in oRecorrentes) {
                 var oRecorrente = oRecorrentes[i];
-                $('#listaRecorrentes').append(CategoriaHelper.showCategoriaTr(oRecorrente));
+                if (oRecorrente.TIPO == Transacao.DEBITO) {
+                    contDespesas++;
+                    $('#listaRecorrentesDespesas').append(RecorrenteHelper.showLinhaRecorrenteLi(oRecorrente));
+                } else {
+                    contReceitas++;
+                    $('#listaRecorrentesReceitas').append(RecorrenteHelper.showLinhaRecorrenteLi(oRecorrente));
+                }
             }
-            $('.linhaCategoria').click(function() {
-                App.execute('categoria/detalhes?id=' + $(this).attr('id_categoria'))
+            
+            if (contReceitas == 0) {
+                $('#listaRecorrentesReceitas').html("<li class='list-group-item'>Que pena! Nada a receber esse mês</li>");
+            }
+            
+            if (contDespesas == 0) {
+                $('#listaRecorrentesDespesas').html("<li class='list-group-item'>Parabéns, nenhuma conta a pagar.</li>");
+            }
+            
+            $('.btn_editar_recorrente').click(function () {
+                $(this).parent().next().toggleClass('editar');
+            });
+            
+            $('.linha_recorrente').click(function() {
+                if ($(this).parent().hasClass('editar')) {
+                    App.execute('recorrente/detalhes?id=' + $(this).attr('id_recorrente'));
+                }
             });
         });
-
     };
-
+    
 };
