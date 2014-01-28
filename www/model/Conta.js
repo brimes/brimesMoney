@@ -11,6 +11,29 @@ Conta = function() {
         limite: 'float',
         sincronizado: 'int'
     };
+    this.getSaldoFinalDoMes = function(callBack) {
+        var oThis = this;
+        ORM.select({
+            select: '*',
+            table: 'transacao',
+            where: 'id_conta = ' + oThis.id + ''
+        }, function(results) {
+            var saldo = parseFloat(oThis.saldo_inicial);
+            for (var i in results) {
+                var dadosTrn = results[i];
+                if (!isNaN(dadosTrn.VALOR)) {
+                    if (dadosTrn.TIPO == Transacao.CREDITO) {
+                        saldo = parseFloat(saldo) + parseFloat(dadosTrn.VALOR);
+                    } else {
+                        saldo = parseFloat(saldo) - parseFloat(dadosTrn.VALOR);
+                    }
+                }
+            }
+            callBack(saldo);
+        }, function() {
+            callBack(0);
+        });
+    };
 };
 
 Conta.getTotaldeContas = function(onSuccess, onError) {

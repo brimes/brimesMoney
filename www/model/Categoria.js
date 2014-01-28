@@ -29,6 +29,10 @@ Categoria = function() {
 };
 Categoria.prototype = new ModelDb();
 Categoria.getId = function(descricao, onSuccess) {
+    if (!isNaN(descricao)) {
+        onSuccess(descricao);
+        return true;
+    }
     ORM.select({
         select: "*",
         table: "categoria",

@@ -1,0 +1,38 @@
+<form class="form-inline" style="margin-bottom: 50px" role="form">
+    <input type="hidden" id="idRecorrente">
+    <div class="row linha_form">
+        <div class="form-group col-xs-6 col-sm-6 col-lg-6">
+            <div class="input-group">
+                <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                <input type="text" placeholder="Data" class="form-control obrigatorio" id="dataTransacao">
+            </div>
+        </div>
+        <div class="form-group col-xs-6 col-sm-6 col-lg-6">
+            <button type="button" id="btnDataAtual" class="btn btn-default">
+                Data atual
+            </button>            
+        </div>
+    </div>
+    <div class="row linha_form">
+        <div class="form-group col-xs-6 col-sm-6 col-lg-6">
+            <div class="input-group">
+                <span class="input-group-addon"><span class="glyphicon glyphicon-usd"></span></span>
+                <input type="number" placeholder="Valor" class="form-control text-right obrigatorio campo_valor" id="valorTransacao">
+            </div>
+        </div>
+        <div class="form-group col-xs-6 col-sm-6 col-lg-6">
+            <label class="control-label">Conta: </label><br/>
+            <span id="lblConta"></span>
+        </div>
+    </div>
+    <div class="row linha_form">
+        <div class="form-group col-xs-6 col-sm-6 col-lg-6">
+            <label class="control-label">Beneficiário: </label><br/>
+            <span id="lblBeneficiario"></span>
+        </div>
+        <div class="form-group col-xs-6 col-sm-6 col-lg-6">
+            <label class="control-label">Categoria: </label><br/>
+            <span id="lblCategoria"></span>
+        </div>
+    </div>
+</form>

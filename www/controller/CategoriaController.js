@@ -17,6 +17,22 @@ CategoriaController = function () {
             $('#btnVoltar').click(function () {
                 App.execute('categoria/index');
             });
+            if (params.id == "0") {
+                $('#btnApagar').hide();
+            } else {
+                $('#btnApagar').show();
+            }
+            $('#btnApagar').click(function() {
+                if (!confirm('Apagar a categoria?')) {
+                    return false;
+                }
+                var oCategoria = new Categoria();
+                oCategoria.findById($('#idCategoria').val(), function (oCategoria) {
+                    oCategoria.del(function () {
+                        App.execute('categoria/index');
+                    });
+                });
+            });
             $('#btnSalvar').click(function () {
                  if (!Util.validaCamposObrigatorios()) {
                     return false;

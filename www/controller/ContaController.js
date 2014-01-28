@@ -96,6 +96,9 @@ ContaController = function () {
                 var oConta = oContas[i];
                 $('#listaContas').append(ContaHelper.showLinhaConta(oConta));
             }
+            
+            ContaHelper.renderSaldos('saldo_conta');
+            
             $('.linhaConta').click(function () {
                App.execute('conta/transacoes?idConta=' + $(this).attr('id_conta'));
             });

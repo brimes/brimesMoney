@@ -28,10 +28,25 @@ ContaHelper = {
             htmlRet += "<td class='debito'>D</td>";
         }
         htmlRet += "<td>" + dadosConta.descricao + "</td>";
-        htmlRet += "<td><span class='pull-right'>" + UtilHelper.toValor(dadosConta.saldo) + "</span></td>";
+        htmlRet += "<td><span class='pull-right' id='saldo_conta" + dadosConta.id + "'></span></td>";
         htmlRet += "<td><span class=\"glyphicon glyphicon-edit btnTable btnEditar\"></span></td>";
         htmlRet += "</tr>";
         return htmlRet;
+    },
+    renderSaldo: function(oConta, elementArray) {
+        oConta.getSaldoFinalDoMes(function (saldo) {
+            $('#' + elementArray + "" + oConta.id + "").html(UtilHelper.toValor(saldo));
+        });
+    },
+    renderSaldos: function(elementArray) {
+        var oThis = this;
+        var oContas = new Conta();
+        oContas.findAll("id > 0", function (oContas) {
+            for (var i in oContas) {
+                var oConta = oContas[i];
+                oThis.renderSaldo(oConta, elementArray);
+            }
+        });
     },
     showLinhaContaLi: function(dadosConta) {
         var htmlRet = "";

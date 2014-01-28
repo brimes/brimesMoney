@@ -11,29 +11,11 @@ var App = {
     ),
     aMesesExtenso: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"],
     dadosMove: {},
-//    this.onBackButton = null;
     actionViewAnterior: "",
     actionAtual: "",
-//
-//    // Variaveis publicas
     controller: "",
     view: "",
-//    this.action = "";
     locationHome: Util.dirname(location.href),
-//    this.conectado;
-//    this.pathApp;
-//    this.params = "";
-//    this.tituloTela = "";
-//    this.contentMenu = new Array();
-//    this.txtNotificacao = "";
-//    this.swipesLeftRightOn = false;
-//    this.swipeDownOn = false;
-//    this.sincronizando = false;
-//    this.paramsURL = {};
-//    this.global = {};
-//    this.configuracaoDataPadrao = {theme: 'android', mode: 'clickpick', display: 'bottom', lang: 'pt-BR'};
-//    this.configuracaoGeoLocalizacao = {timeout: 60000, enableHighAccuracy: true};
-
     init: function() {
         dbSQL.init(); // iniciando o SQL
         this.parseParamsURL();
@@ -173,42 +155,48 @@ var App = {
         });
         return;
     },
+    modal: function(view, params) {
+        if (view == 'close') {
+            $('#modalView').modal('hide');
+            return;
+        }
+        var viewCompleta = "";
+        var oThis = this;
+        if (view.indexOf("/") > 0) {
+            viewCompleta = this.locationHome + "/view/" + view + ".html";
+        } else {
+            viewCompleta = this.locationHome + "/view/" + this.controller + "/" + view + ".html";
+        }
+        this.loading(true, "Carregando");
+        this.log("Abrindo modal view: " + viewCompleta);
+        if (typeof params.title != 'undefined') {
+            $('#myModalLabel').html(params.title);
+        } else {
+            $('#myModalLabel').html("Brimes Money");
+        }
+        if (typeof params.cancel != 'undefined') {
+            $('#modelCancel').unbind().click(params.cancel);
+        }
+        if (typeof params.confirm != 'undefined') {
+            $('#modelConfirm').unbind().click(params.confirm);
+        }
+
+        $('#conteudoModal').empty();
+        $('#conteudoModal').html('');
+        $('#conteudoModal').load(viewCompleta, function() {
+            $('#modalView').modal();
+            if (typeof params.onLoad != 'undefined') {
+                params.onLoad();
+            }
+            App.loading(false);
+        });
+        return;
+
+
+    },
     loading: function(ativa, msg) {
 
     },
-//
-//    this.renderPartial = function(dentino, view, params, callback) {
-//        var viewCompleta = "";
-//        if (view.indexOf("/") > 0) {
-//            viewCompleta = this.locationHome + "/view/" + view + ".html";
-//            //this.view = view;
-//        } else {
-//            viewCompleta = this.locationHome + "/view/" + this.controller + "/" + view + ".html";
-//            //this.view = this.controller + "/" + view;
-//        }
-//        this.log("Abrindo view partial: " + viewCompleta);
-//        dentino.load(viewCompleta, function() {
-//            dentino.trigger('create');
-//            if (typeof callback !== 'undefined') {
-//                callback(this, params);
-//            }
-//        });
-//
-//    };
-//
-//    this.migrateModels = function() {
-//        var modelo;
-//        for (i in config_gaModels) {
-//
-//            this.log("migrando tabela: " + config_gaModels[i]);
-//            eval("modelo = new " + config_gaModels[i] + "();");
-//
-//            this.log("migrando tabela2: " + config_gaModels[i]);
-//            ORM.migrate(modelo);
-//
-//        }
-//    };
-//
     close: function() {
         if (confirm("Deseja sair da aplicação?")) {
             this.setConfig('ultima_action', "");
@@ -221,6 +209,9 @@ var App = {
             e.stopPropagation();
             QuesterApp.execute(this.attributes['href'].value);
             return false;
+        });
+        $('#modalView').on('hidden.bs.modal', function(e) {
+            $("#conteudoModal").empty();
         });
     },
     ready: function() {
@@ -269,24 +260,6 @@ var App = {
             }
         });
     },
-//
-//    this.alteraElemento = function(elemento) {
-//        $(elemento).parent("p").children(".oculta").toggleClass("oculta");
-//        $(elemento).toggleClass("oculta");
-//    };
-//
-//    this.loadingBtn = function(elemento, ativa, text) {
-//        if (ativa) {
-//            $(elemento).attr("disabled", true);
-//            $(elemento).val("Carregando...");
-//            $(elemento).button("refresh");
-//        } else {
-//            $(elemento).attr("disabled", false);
-//            $(elemento).val(text);
-//            $(elemento).button("refresh");
-//        }
-//    };
-//
     log: function(texto, tipo) {
         var debug = this.getConfig('debug');
         debug = 1;
@@ -319,168 +292,74 @@ var App = {
     setConfig: function(variavel, valor) {
         return window.localStorage.setItem(variavel, valor);
     },
-//
-//    this.getWebolUrl = function() {
-//        var url = "";
-//        if (parseInt(this.getConfig("conexaossl")) === 1) {
-//            url += "https://";
-//        } else {
-//            url += "http://";
-//        }
-//
-//        if ((this.getConfig("host") === "") || (this.getConfig("host") === null)) {
-//            url += "webol.fidelize.com.br/";
-//        } else {
-//            url += this.getConfig("host") + "/";
-//        }
-//
-//        url += this.trim(this.getConfig("empresa").toLowerCase());
-//
-//        return url;
-//    };
-//
-//    this.getUrl = function(modulo, complemento) {
-//        modulo = typeof modulo !== 'undefined' ? modulo : 'quester';
-//        complemento = typeof complemento !== 'undefined' ? complemento : 'api/';
-//
-//        var url = this.getWebolUrl() + "/" + modulo + "/";
-//
-//        if (this.getConfig("ambiente") === 'test') {
-//            url += "api2/";
-//        } else {
-//            url += complemento;
-//        }
-//
-//        return url;
-//    };
-//
-//    this.toastMessage = function(msg) {
-//        $("<div class='ui-overlay-shadow ui-body-a ui-corner-all toast_message'>"
-//                + msg
-//                + "</div>")
-//                .css({
-//            "display": "none",
-//        })
-//                .appendTo($.mobile.pageContainer).fadeIn()
-//                .delay(1500)
-//                .fadeOut(1000, function() {
-//            $(this).remove();
-//        });
-//    }
-//
-//    this.enviaRequisicao = function(url, jsonParametros, onSuccess, onError) {
-//        $.ajax({
-//            type: "POST",
-//            url: url,
-//            data: jsonParametros,
-//            success: function(data) {
-//                onSuccess(data);
-//            },
-//            error: function(xhr, textError, errorThrown) {
-//                if (errorThrown == 'Unauthorized') {
-//                    textError = 'Token inválido';
-//                }
-//                onError(textError, errorThrown, url);
-//            }
-//        });
-//    };
-//
-//    this.enviaArquivo = function(arquivoLocal, url, params, onSuccess, onError, onProgress) {
-//        var options = new FileUploadOptions();
-//        options.fileKey = "Imagem";
-//        options.fileName = arquivoLocal.substr(arquivoLocal.lastIndexOf('/') + 1);
-//        options.mimeType = "image/jpeg";
-//        options.params = params;
-//        var fileTransfer = new FileTransfer();
-//        if (typeof onProgress != 'undefined') {
-//            fileTransfer.onprogress = onProgress;
-//        }
-//        fileTransfer.upload(arquivoLocal, encodeURI(url), onSuccess, onError, options);
-//    };
-//
-//    this.estaLogado = function() {
-//        return (this.getConfig('logado') == 1);
-//    };
-//
-//    this.tiraFoto = function(fnSuccess, fnError, params) {
-//        QuesterApp.setConfig('controle', 'TIRANDO_FOTO');
-//        QuesterApp.setConfig('dados_controle', params);
-//        navigator.camera.getPicture(function(localImagem) {
-//            QuesterApp.setConfig('controle', '');
-//            fnSuccess(localImagem);
-//        }, function(msgError) {
-//            QuesterApp.setConfig('controle', '');
-//            if (typeof fnError !== 'undefined') {
-//                fnError(msgError);
-//            }
-//        }, {
-//            quality: 50,
-//            destinationType: Camera.DestinationType.FILE_URI,
-//            sourceType: Camera.PictureSourceType.CAMERA,
-//            saveToPhotoAlbum: false,
-//            correctOrientation: true,
-//            targetWidth: 800,
-//            targetHeight: 600
-//        });
-//    };
-//
-//    this.renderMiniatura = function(locaFoto, elemento, width) {
-//        var img = new Image();
-//        img.onload = function() {
-//            var height = 0;
-//            var proporcao = (img.width - img.height);
-//            if (proporcao === 0) {
-//                height = width;
-//            } else {
-//                height = ((width * img.height) / img.width);
-//            }
-//            height = (height * 0.80); // POG
-//            var elementCanvas = $('<canvas></canvas>');
-//            var context = elementCanvas[0].getContext("2d");
-//            context.drawImage(img, 0, 0, img.width, img.height, 5, 0, width, height);
-//            elemento.append(elementCanvas);
-//        };
-//        img.src = locaFoto;
-//    };
-//
-//    this.input = function(label, onSuccess) {
-//        var conteudo = $('#divPopup').find('.conteudo');
-//        conteudo.html('<label>' + label + '</label><br/><input id="popupInputText" class="input_padrao" type="password" data-role="none" /><br/>' +
-//                '<a href="#" id="btnConfirmarInputPopup" data-role="button" data-icon="check">Confirmar</a>');
-//        conteudo.trigger('create');
-//        conteudo.find('#btnConfirmarInputPopup').unbind().click(function(e) {
-//            //e.stopPropagation();
-//            $('#divPopup').slideUp();
-//            onSuccess($('#popupInputText').val());
-//        });
-//        $('#divPopup').slideDown();
-//    };
-//
-//    this.buscaImei = function() {
-//        if (QuesterApp.getConfig('imei') === null) {
-//            if (typeof this.paramsURL.imei != 'undefined') {
-//                QuesterApp.setConfig('imei', this.paramsURL.imei);
-//            } else {
-//                QuesterApp.setConfig('imei', device.uuid);
-//            }
-//        }
-//        return QuesterApp.getConfig('imei');
-//    };
-//
+    toastMessage: function(msg) {
+        $("<div class='ui-overlay-shadow ui-body-a ui-corner-all toast_message'>"
+                + msg
+                + "</div>")
+                .css({
+            "display": "none",
+        })
+                .appendTo($.mobile.pageContainer).fadeIn()
+                .delay(1500)
+                .fadeOut(1000, function() {
+            $(this).remove();
+        });
+    },
     isAndroid: function() {
         return (navigator.userAgent.match(/Android/i));
     },
-//
-//    this.setNotificacao = function(msg) {
-//        $('#divNotificacao').find('span').html(msg);
-//        $('#divNotificacao').show();
-//    };
-//
-//    this.limpaNotificacao = function() {
-//        $('#divNotificacao').find('span').html('');
-//        $('#divNotificacao').hide();
-//    };
-    getCurrentDate: function() {
+    decDate: function(dataBase, valor, tipo) {
+        var aData = dataBase.split("-");
+        var oData = new Date(parseInt(aData[0] * 1), parseInt(aData[1] * 1) - 1, parseInt(aData[2] * 1));
+        if (tipo == 'month') {
+            oData.setMonth(oData.getMonth() - valor);
+        }
+        if (tipo == 'day') {
+            oData.setDate(oData.getDate() - valor);
+        }
+        var year = parseInt(oData.getFullYear());
+        if (tipo == 'year') {
+            year = year - valor;
+        }
+
+        var mes = oData.getMonth() + 1;
+        if (mes < 10) {
+            mes = "0" + mes;
+        }
+        var dia = oData.getDate();
+        if (dia < 10) {
+            dia = "0" + dia;
+        }
+        return  year + '-' + mes + '-' + dia;
+    },
+    incDate: function(dataBase, valor, tipo) {
+        var aData = dataBase.split("-");
+        var oData = new Date(parseInt(aData[0] * 1), parseInt(aData[1] * 1) - 1, parseInt(aData[2] * 1));
+        if (tipo == 'month') {
+            oData.setMonth(oData.getMonth() + valor);
+        }
+        if (tipo == 'day') {
+            oData.setDate(oData.getDate() + valor);
+        }
+        var year = parseInt(oData.getFullYear());
+        if (tipo == 'year') {
+            year = year + valor;
+        }
+
+        var mes = oData.getMonth() + 1;
+        if (mes < 10) {
+            mes = "0" + mes;
+        }
+        var dia = oData.getDate();
+        if (dia < 10) {
+            dia = "0" + dia;
+        }
+        return  year + '-' + mes + '-' + dia;
+    },
+    getCurrentDate: function(format) {
+        if (typeof format == 'undefined') {
+            var format = 'yyyy-mm-dd';
+        }
         var dataAtual = new Date();
         var mes = dataAtual.getMonth() + 1;
         if (mes < 10) {
@@ -491,8 +370,10 @@ var App = {
         if (dia < 10) {
             dia = "0" + dia;
         }
-
-        return  dataAtual.getFullYear() + '-' + mes + '-' + dia;
+        var strRet = format.replace('yyyy', dataAtual.getFullYear());
+        strRet = strRet.replace('mm', mes);
+        strRet = strRet.replace('dd', dia);
+        return   strRet;
 
     },
     converteData: function(data, formatoOrigem, formatoDestino) {
@@ -518,9 +399,7 @@ var App = {
         if (segundo < 10) {
             segundo = "0" + segundo;
         }
-
         return  this.getCurrentDate() + ' ' + hora + ':' + minuto + ':' + segundo;
-
     },
     dataPorExtenso: function(data) {
         if (this.getCurrentDate() == data) {
@@ -537,61 +416,32 @@ var App = {
         }
 
     },
+    getCurrentTimestamp: function() {
+        var dataAtual = new Date();
+        return dataAtual.getTime();
+    },
+    getDiffDeDiasEntreDatas: function(dataMenor, dataMaior) {
+        var aData = dataMenor.split("-");
+        var oDataMenor = new Date(aData[0], (aData[1] - 1), aData[2], 0, 0, 0);
+
+        var aData = dataMaior.split("-");
+        var oDataMaior = new Date(aData[0], (aData[1] - 1), aData[2], 0, 0, 0);
+
+        var diff = Math.round((oDataMaior - oDataMenor) / (60000 * 60 * 24));
+
+        return diff;
+    },
     toToggle: function(classToggle, onToogle) {
-        $(classToggle).click(function () {
+        $(classToggle).click(function() {
             $(classToggle).removeClass("selecionado");
             $(this).addClass("selecionado");
             if (typeof onToogle != 'undefined') {
                 onToogle(this);
             }
         });
+    },
+    trim: function(str) {
+        return str.replace(/^\s+|\s+$/g, "");
     }
-
 };
 
-/* App.prototype = new ExtrasFidelize();
- 
- 
- function ExtrasFidelize() {
- }
- 
- 
- ExtrasFidelize.prototype.trim = function(str) {
- return str.replace(/^\s+|\s+$/g, "");
- };
- 
- ExtrasFidelize.prototype.getObjectClass = function(obj) {
- if (obj && obj.constructor && obj.constructor.toString) {
- var arr = obj.constructor.toString().match(
- /function\s*(\w+)/);
- 
- if (arr && arr.length == 2) {
- return arr[1];
- }
- }
- 
- return undefined;
- }
- 
- 
- ExtrasFidelize.prototype.getCurrentTimestamp = function() {
- var dataAtual = new Date();
- return dataAtual.getTime();
- };
- 
- ExtrasFidelize.prototype.getDiffDeDiasEntreDatas = function(dataMenor, dataMaior) {
- var aData = dataMenor.split("-");
- var oDataMenor = new Date(aData[0], (aData[1] - 1), aData[2], 0, 0, 0);
- 
- var aData = dataMaior.split("-");
- var oDataMaior = new Date(aData[0], (aData[1] - 1), aData[2], 0, 0, 0);
- 
- var diff = Math.round((oDataMaior - oDataMenor) / (60000 * 60 * 24));
- 
- return diff;
- };
- 
- 
- 
- 
- */

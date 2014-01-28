@@ -30,6 +30,11 @@ Beneficiario = function() {
 Beneficiario.prototype = new ModelDb();
 
 Beneficiario.getId = function(descricao, onSuccess) {
+    if (!isNaN(descricao)) {
+        onSuccess(descricao);
+        return true;
+    }
+    
     ORM.select({
         select: "*",
         table: "beneficiario",
