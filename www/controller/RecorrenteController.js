@@ -24,6 +24,13 @@ RecorrenteController = function() {
     this.actionDetalhes = function(params) {
         var oThis = this;
         App.changeView('view', 'Transação recorrente.', function() {
+            $('#dataTransacao').datepicker({
+                format: 'dd/mm/yyyy',
+                autoclose: true,
+                todayBtn: true,
+                todayHighlight: true
+            });
+            $('#dataTransacao').attr("readonly", "readonly");
             ContaHelper.campoContas('#contas');
             App.toToggle('.btn_valor');
             App.toToggle('.btn_tipo', function(e) {
@@ -220,6 +227,13 @@ RecorrenteController = function() {
                         });
                     },
                     onLoad: function() {
+                        $('#dataTransacao').datepicker({
+                            format: 'dd/mm/yyyy',
+                            autoclose: true,
+                            todayBtn: true,
+                            todayHighlight: true
+                        });
+                        $('#dataTransacao').attr("readonly", "readonly");
                         $("#dataTransacao").val(App.converteData(data, 'yyyy-mm-dd', 'dd/mm/yyyy'));
                         $("#valorTransacao").val(valor);
                         $('#lblBeneficiario').html(beneficiario);

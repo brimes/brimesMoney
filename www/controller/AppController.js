@@ -28,6 +28,13 @@ AppController = function() {
             tituloPagina = '<span class=\"glyphicon glyphicon-circle-arrow-up blue\"></span> Receita';
         }
         App.changeView('index', tituloPagina, function() {
+            $('#dataTransacao').datepicker({
+                format: 'dd/mm/yyyy',
+                autoclose: true,
+                todayBtn: true,
+                todayHighlight: true
+            });
+            $('#dataTransacao').attr("readonly", "readonly");
             if (typeof param.id == 'undefined' || param.id == "0") {
                 $('#dataTransacao').val(App.converteData(App.getCurrentDate(), 'yyyy-mm-dd', 'dd/mm/yyyy'));
                 oThis.carregarBeneficiarios($('#beneficiario').val());
