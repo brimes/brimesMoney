@@ -173,10 +173,10 @@ RecorrenteController = function() {
                 var oRecorrente = oRecorrentes[i];
                 if (oRecorrente.TIPO == Transacao.DEBITO) {
                     contDespesas++;
-                    $('#listaRecorrentesDespesas').append(RecorrenteHelper.showLinhaRecorrenteLi(oRecorrente));
+                    $('#listaRecorrentesDespesas').append(RecorrenteHelper.showLinhaRecorrenteLi(oRecorrente, mes));
                 } else {
                     contReceitas++;
-                    $('#listaRecorrentesReceitas').append(RecorrenteHelper.showLinhaRecorrenteLi(oRecorrente));
+                    $('#listaRecorrentesReceitas').append(RecorrenteHelper.showLinhaRecorrenteLi(oRecorrente, mes));
                 }
             }
 
@@ -193,6 +193,10 @@ RecorrenteController = function() {
             });
 
             $('.linha_recorrente').click(function() {
+                if ($(this).hasClass('recorrente_futura')) {
+                    alert("Atenção: Essa transação não pode pode ser regitrada. Registre a transação do mes anterior.");
+                    return true;
+                }
                 if ($(this).parent().hasClass('editar')) {
                     App.execute('recorrente/detalhes?id=' + $(this).attr('id_recorrente'));
                     return true;

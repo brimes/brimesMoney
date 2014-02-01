@@ -2,8 +2,8 @@ var App = {
     callbackPage: function() {
     },
     opcoesMenu: new Array(
-            {label: "Nova dispesa", icon: "glyphicon-circle-arrow-down red", action: "app/novaTransacao?tipo=DESPESA", inicial: true},
-    {label: "Nova receita", icon: "glyphicon-circle-arrow-up blue", action: "app/novaTransacao?tipo=RECEITA", inicial: true},
+            {label: "Nova dispesa", icon: "glyphicon-circle-arrow-down red", action: "app/transacao?tipo=D", inicial: true},
+    {label: "Nova receita", icon: "glyphicon-circle-arrow-up blue", action: "app/transacao?tipo=C", inicial: true},
     {label: "Contas", icon: "glyphicon-list-alt", action: "conta/index", inicial: true},
     {label: "Categorias", icon: "glyphicon-tag", action: "categoria/index", inicial: false},
     {label: "Transações Recorrentes", icon: "glyphicon-th-list", action: "recorrente/index", inicial: false},
@@ -430,6 +430,23 @@ var App = {
         var diff = Math.round((oDataMaior - oDataMenor) / (60000 * 60 * 24));
 
         return diff;
+    },
+    getDiffDeMesesEntreDatas: function(dataMenor, dataMaior) {
+        var aData = dataMenor.split("-");
+        var oDataMenor = new Date(aData[0], (aData[1] - 1), 1, 0, 0, 0);
+
+        var aData = dataMaior.split("-");
+        var oDataMaior = new Date(aData[0], (aData[1] - 1), 1, 0, 0, 0);
+        
+        if (oDataMaior == oDataMenor) {
+            return 0;
+        }
+        
+        var diffAnos = (oDataMaior.getFullYear() - oDataMenor.getFullYear());
+        diffAnos = diffAnos * 12;
+        var diffMeses = (oDataMaior.getMonth() - (oDataMenor.getMonth() - diffAnos));
+        
+        return diffMeses;
     },
     toToggle: function(classToggle, onToogle) {
         $(classToggle).click(function() {

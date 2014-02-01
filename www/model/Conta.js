@@ -11,6 +11,29 @@ Conta = function() {
         limite: 'float',
         sincronizado: 'int'
     };
+    this.getSaldoAtual = function(callBack) {
+        var oThis = this;
+        ORM.select({
+            select: '*',
+            table: 'transacao',
+            where: "id_conta = " + oThis.id + " AND data <= '" + App.getCurrentDate() + "'"
+        }, function(results) {
+            var saldo = parseFloat(oThis.saldo_inicial);
+            for (var i in results) {
+                var dadosTrn = results[i];
+                if (!isNaN(dadosTrn.VALOR)) {
+                    if (dadosTrn.TIPO == Transacao.CREDITO) {
+                        saldo = parseFloat(saldo) + parseFloat(dadosTrn.VALOR);
+                    } else {
+                        saldo = parseFloat(saldo) - parseFloat(dadosTrn.VALOR);
+                    }
+                }
+            }
+            callBack(saldo);
+        }, function() {
+            callBack(0);
+        });
+    };
     this.getSaldoFinalDoMes = function(callBack) {
         var oThis = this;
         ORM.select({
@@ -52,18 +75,12 @@ Conta.getTotaldeContas = function(onSuccess, onError) {
 };
 
 Conta.atualizaSaldo = function(idConta, valor, operacao, callBack) {
-    var oConta = new Conta();
-    oConta.findById(idConta, function(oConta) {
-        if (oConta.saldo == null) {
-            oConta.saldo = 0;
-        }
-        if (operacao == 'C') {
-            oConta.saldo = (parseFloat(oConta.saldo) + parseFloat(valor));
-        } else {
-            oConta.saldo -= valor;
-        }
-        oConta.save(function() {
-            callBack();
+    new Conta().findById(idConta, function(oConta) {
+        oConta.getSaldoAtual(function (saldo) {
+            oConta.saldo = saldo;
+            oConta.save(function() {
+                callBack();
+            });
         });
     });
 };

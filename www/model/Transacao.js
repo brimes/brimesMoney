@@ -11,6 +11,12 @@ Transacao = function() {
         tipo: 'text',
         sincronizado: 'int'
     };
+    
+    this.relations = {
+        beneficiario: {type: "BELONGS_TO", class: "Beneficiario", field: "id_beneficiario"},
+        categoria: {type: "BELONGS_TO", class: "Categoria", field: "id_categoria"},
+    };
+    
 };
 Transacao.prototype = new ModelDb();
 Transacao.DEBITO = 'D';
@@ -20,6 +26,10 @@ Transacao.adicionaTransacao = function(jDados, onSuccess) {
         Categoria.getId(jDados.categoria, function(idCategoria) {
             var oTransacao = new Transacao();
             var strData = App.converteData(jDados.data, 'dd/mm/yyyy', 'yyyy-mm-dd');
+            if (jDados.id > 0) {
+                oTransacao.id = jDados.id;
+                oTransacao.isNewRecord = false;
+            }
             oTransacao.data = strData;
             oTransacao.valor = jDados.valor;
             oTransacao.id_beneficiario = idBeneficiario;

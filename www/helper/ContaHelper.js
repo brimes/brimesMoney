@@ -1,13 +1,16 @@
 ContaHelper = {
-    campoContas: function(element) {
-        var oContas = new Conta();
-        oContas.findAll('id>0', function(oContas) {
+    campoContas: function(element, idConta) {
+        if (typeof idConta == 'undefined') {
+            idConta = 0;
+        }
+        new Conta().findAll('id>0', function(oContas) {
             var strPanelContas = "<div class='panel panel-default'>";
             strPanelContas += "<div class='panel-heading'>Conta</div>";
             strPanelContas += '<ul class="list-group" id="linhasContas">';
             for (var i in oContas) {
                 var oConta = oContas[i];
-                strPanelContas += ContaHelper.showLinhaContaLi(oConta);
+                var selecionado = (oConta.id == idConta);
+                strPanelContas += ContaHelper.showLinhaContaLi(oConta, selecionado);
             }
             strPanelContas += '</ul></div>';
             $(element).html(strPanelContas);
@@ -48,16 +51,25 @@ ContaHelper = {
             }
         });
     },
-    showLinhaContaLi: function(dadosConta) {
+    showLinhaContaLi: function(dadosConta, isSelected) {
         var htmlRet = "";
-        htmlRet += "<li class='list-group-item' id_conta='" + dadosConta.id + "'><span class='infoConta'>" + dadosConta.descricao + "<span class='pull-right'>" + UtilHelper.toValor(dadosConta.saldo) + "</span></span></li>";
+        var selected = "";
+        if (typeof isSelected != 'undefined' && isSelected == true) {
+            selected = "selecionado";
+        }
+        htmlRet += "<li class='list-group-item " + selected + "' id_conta='" + dadosConta.id + "'><span class='infoConta'>" + dadosConta.descricao + "<span class='pull-right'>" + UtilHelper.toValor(dadosConta.saldo) + "</span></span></li>";
         return htmlRet;
     },
     showLiTransacao: function(dadosTransacao) {
         var htmlRet = "";
         var dataExtenso = App.dataPorExtenso(dadosTransacao.DATA);
         var destaque = (dadosTransacao.TIPO == Transacao.CREDITO) ? "destaque_credito" : "destaque_debito";
-        htmlRet += "<li class='lista_transacao list-group-item' id_transacao='" + dadosTransacao.ID + "'><span class='dataExtenso'>" + dataExtenso + "</span><span class='pull-right " + destaque + "'>" + UtilHelper.toValor(dadosTransacao.VALOR) + "</span><br/>" + dadosTransacao.BENEFICIARIO + "</li>";
+        htmlRet += "<li class='lista_transacao list-group-item'" 
+                + " id_transacao='" + dadosTransacao.ID + "'" 
+                + " tipo_transacao='" + dadosTransacao.TIPO +  "'>"
+                + "<span class='dataExtenso'>" + dataExtenso + "</span><span class='pull-right " + destaque + "'>" 
+                + UtilHelper.toValor(dadosTransacao.VALOR) 
+                + "</span><br/>" + dadosTransacao.BENEFICIARIO + "</li>";
         return htmlRet;
     }
 };
