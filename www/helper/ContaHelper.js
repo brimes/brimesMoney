@@ -15,10 +15,18 @@ ContaHelper = {
             strPanelContas += '</ul></div>';
             $(element).html(strPanelContas);
             $(element).find('li').click(function() {
+                var escondidos = $(this).hasClass('escondidos');
                 $(this).parent().children('li').each(function() {
                     $(this).removeClass('selecionado');
+                    if (escondidos) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
                 });
+                $(this).toggleClass('escondidos')
                 $(this).addClass('selecionado');
+                $(this).show();
             });
         });
     },

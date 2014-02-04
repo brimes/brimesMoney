@@ -162,3 +162,8 @@ body {
 .recorrente_atrasado {
     background-color: #FAC4C0;
 }
+
+.fix-lr {
+    padding-left: 2px;
+    padding-right: 2px;
+}

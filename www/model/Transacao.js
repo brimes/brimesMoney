@@ -9,6 +9,8 @@ Transacao = function() {
         parcela: 'int',
         id_conta: 'text',
         tipo: 'text',
+        transferencia: 'int', // 1 - Destino, 2 - Origem
+        id_conta_transferencia: 'int',
         sincronizado: 'int'
     };
     
@@ -37,11 +39,15 @@ Transacao.adicionaTransacao = function(jDados, onSuccess) {
             oTransacao.id_conta = jDados.conta;
             oTransacao.tipo = jDados.tipo;
             oTransacao.save(function() {
-                Categoria.acrescentaNumeroTransacoes(idCategoria);
-                Beneficiario.acrescentaNumeroTransacoes(idBeneficiario, idCategoria);
-                Conta.atualizaSaldo(jDados.conta, jDados.valor, jDados.tipo, function() {
+                if (typeof jDados.noCache != 'undefined' && jDados.noCache == true) {
                     onSuccess();
-                });
+                } else {
+                    Categoria.acrescentaNumeroTransacoes(idCategoria);
+                    Beneficiario.acrescentaNumeroTransacoes(idBeneficiario, idCategoria);
+                    Conta.atualizaSaldo(jDados.conta, jDados.valor, jDados.tipo, function() {
+                        onSuccess();
+                    });
+                }
             });
         });
     });
@@ -51,7 +57,7 @@ Transacao.buscaTransacoes = function(filtro, onSuccess, onError) {
         select: 't.*, b.descricao as BENEFICIARIO, c.descricao as CATEGORIA',
         table: 'transacao t JOIN categoria c ON c.id = t.id_categoria JOIN beneficiario b ON b.id = t.id_beneficiario',
         where: filtro,
-        order: "t.data"
+        order: "t.data, t.id"
     }, function(results) {
         onSuccess(results);
     }, function() {

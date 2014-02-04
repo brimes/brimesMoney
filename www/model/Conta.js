@@ -19,6 +19,9 @@ Conta = function() {
             where: "id_conta = " + oThis.id + " AND data <= '" + App.getCurrentDate() + "'"
         }, function(results) {
             var saldo = parseFloat(oThis.saldo_inicial);
+            if (isNaN(saldo)) {
+                saldo = 0;
+            }
             for (var i in results) {
                 var dadosTrn = results[i];
                 if (!isNaN(dadosTrn.VALOR)) {
@@ -42,6 +45,9 @@ Conta = function() {
             where: 'id_conta = ' + oThis.id + ''
         }, function(results) {
             var saldo = parseFloat(oThis.saldo_inicial);
+            if (isNaN(saldo)) {
+                saldo = 0;
+            }
             for (var i in results) {
                 var dadosTrn = results[i];
                 if (!isNaN(dadosTrn.VALOR)) {
@@ -84,6 +90,35 @@ Conta.atualizaSaldo = function(idConta, valor, operacao, callBack) {
         });
     });
 };
+
+Conta.getId = function(descricao, onSuccess) {
+    if (!isNaN(descricao)) {
+        onSuccess(descricao);
+        return true;
+    }
+    ORM.select({
+        select: "*",
+        table: "conta",
+        where: "descricao = '" + descricao + "'",
+    }, function(results) {
+        var idConta = 0;
+        for (var i in results) {
+            idConta = results[i].ID;
+        }
+        if (idConta == 0) {
+            var oConta = new Conta();
+            oConta.descricao = descricao;
+            oConta.save(function(model) {
+                onSuccess(model.id);
+            });
+        } else {
+            onSuccess(idConta);
+        }
+    }, function() {
+        alert('Erro ao buscar conta');
+    });
+};
+
 
 // Tipo de conta
 Conta.TIPO_DEBITO = 0;

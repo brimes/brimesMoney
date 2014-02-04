@@ -7,7 +7,8 @@ var App = {
     {label: "Contas", icon: "glyphicon-list-alt", action: "conta/index", inicial: true},
     {label: "Categorias", icon: "glyphicon-tag", action: "categoria/index", inicial: false},
     {label: "Transações Recorrentes", icon: "glyphicon-th-list", action: "recorrente/index", inicial: false},
-    {label: "Migrate", icon: "", action: "migrate", inicial: false}
+    {label: "Migrate", icon: "", action: "migrate", inicial: false},
+    {label: "Importar", icon: "", action: "importacao/index", inicial: false}
     ),
     aMesesExtenso: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"],
     dadosMove: {},
@@ -356,11 +357,11 @@ var App = {
         }
         return  year + '-' + mes + '-' + dia;
     },
-    getCurrentDate: function(format) {
+    getDate: function(format, objDate) {
         if (typeof format == 'undefined') {
             var format = 'yyyy-mm-dd';
         }
-        var dataAtual = new Date();
+        var dataAtual = objDate;
         var mes = dataAtual.getMonth() + 1;
         if (mes < 10) {
             mes = "0" + mes;
@@ -375,6 +376,9 @@ var App = {
         strRet = strRet.replace('dd', dia);
         return   strRet;
 
+    },
+    getCurrentDate: function(format) {
+        return this.getDate(format, new Date());
     },
     converteData: function(data, formatoOrigem, formatoDestino) {
         data = data + "";
@@ -437,15 +441,15 @@ var App = {
 
         var aData = dataMaior.split("-");
         var oDataMaior = new Date(aData[0], (aData[1] - 1), 1, 0, 0, 0);
-        
+
         if (oDataMaior == oDataMenor) {
             return 0;
         }
-        
+
         var diffAnos = (oDataMaior.getFullYear() - oDataMenor.getFullYear());
         diffAnos = diffAnos * 12;
         var diffMeses = (oDataMaior.getMonth() - (oDataMenor.getMonth() - diffAnos));
-        
+
         return diffMeses;
     },
     toToggle: function(classToggle, onToogle) {
@@ -459,6 +463,22 @@ var App = {
     },
     trim: function(str) {
         return str.replace(/^\s+|\s+$/g, "");
+    },
+    enviaRequisicao: function(url, jsonParametros, onSuccess, onError) {
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: jsonParametros,
+            success: function(data) {
+                onSuccess(data);
+            },
+            error: function(xhr, textError, errorThrown) {
+                if (errorThrown == 'Unauthorized') {
+                    textError = 'Token inválido';
+                }
+                onError(textError, errorThrown, url);
+            }
+        });
     }
 };
 

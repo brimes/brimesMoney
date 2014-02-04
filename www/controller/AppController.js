@@ -42,7 +42,21 @@ AppController = function() {
                 ContaHelper.campoContas('#contas');
                 $('#idTransacao').val("0");
                 $('#btnApagar').hide();
+                $('.opcoes_despesa').show();
+                $('#btnShowAvancadas').click(function () {
+                    $(this).slideUp();
+                    $('#panelAvancadas').slideDown();
+                    App.toToggle('.btn_tipo_parcela');
+                    App.toToggle('.btn_tipo_pagamento', function (e) {
+                        if ($(e).attr('tipo') == "0") {
+                            $('#dadosTerceiros').show();
+                        } else {
+                            $('#dadosTerceiros').hide();
+                        }
+                    });
+                });
             } else {
+                $('.opcoes_despesa').hide();
                 $('#idTransacao').val(param.id);
                 $('#btnApagar').show();
                 oThis.carregaDadosTransacao(param.id);
