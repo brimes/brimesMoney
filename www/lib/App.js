@@ -2,8 +2,9 @@ var App = {
     callbackPage: function() {
     },
     opcoesMenu: new Array(
-            {label: "Nova dispesa", icon: "glyphicon-circle-arrow-down red", action: "app/transacao?tipo=D", inicial: true},
-    {label: "Nova receita", icon: "glyphicon-circle-arrow-up blue", action: "app/transacao?tipo=C", inicial: true},
+            {label: "Nova dispesa", icon: "glyphicon-minus-sign red", action: "app/transacao?tipo=D", inicial: true},
+    {label: "Nova receita", icon: "glyphicon-plus-sign blue", action: "app/transacao?tipo=C", inicial: true},
+    {label: "Transferencia", icon: "glyphicon-transfer", action: "app/transacao?tipo=T", inicial: true},
     {label: "Contas", icon: "glyphicon-list-alt", action: "conta/index", inicial: true},
     {label: "Categorias", icon: "glyphicon-tag", action: "categoria/index", inicial: false},
     {label: "Transações Recorrentes", icon: "glyphicon-th-list", action: "recorrente/index", inicial: false},
@@ -416,9 +417,9 @@ var App = {
         var dataAtual = new Date();
 
         if (dataAtual.getFullYear() == aData[0]) {
-            return aData[2] + " de " + this.aMesesExtenso[parseInt(aData[1]) - 1];
+            return aData[2] + " de " + this.aMesesExtenso[parseInt(aData[1] * 1) - 1];
         } else {
-            return aData[2] + " de " + this.aMesesExtenso[parseInt(aData[1]) - 1] + "/" + aData[0];
+            return aData[2] + " de " + this.aMesesExtenso[parseInt(aData[1] * 1) - 1] + "/" + aData[0];
         }
 
     },

@@ -1,13 +1,16 @@
 ContaHelper = {
     saldoTotalBanco: 0,
     saldoTotalCartao: 0,
-    campoContas: function(element, idConta) {
+    campoContas: function(element, idConta, label) {
         if (typeof idConta == 'undefined') {
             idConta = 0;
         }
+        if (typeof label == 'undefined') {
+            label = 'Conta';
+        }
         new Conta().findAll("status is not " + Conta.STATUS_DESATIVADA, function(oContas) {
             var strPanelContas = "<div class='panel panel-default'>";
-            strPanelContas += "<div class='panel-heading'>Conta</div>";
+            strPanelContas += "<div class='panel-heading'>" + label + "</div>";
             strPanelContas += '<ul class="list-group" id="linhasContas">';
             for (var i in oContas) {
                 var oConta = oContas[i];

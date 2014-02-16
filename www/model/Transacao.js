@@ -46,6 +46,7 @@ Transacao = function() {
 Transacao.prototype = new ModelDb();
 Transacao.DEBITO = 'D';
 Transacao.CREDITO = 'C';
+Transacao.TRANSFERENCIA = 'T';
 
 Transacao.TIPO_PARCELA_DIVIDIR = 1;
 Transacao.TIPO_PARCELA_MULTIPLICAR = 0;

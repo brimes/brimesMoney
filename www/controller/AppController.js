@@ -23,9 +23,11 @@ AppController = function() {
 
     this.actionTransacao = function(param) {
         var oThis = this;
-        var tituloPagina = '<span class=\"glyphicon glyphicon-circle-arrow-down red\"></span> Despesa';
+        var tituloPagina = '<span class=\"glyphicon glyphicon-minus-sign red\"></span> Despesa';
         if (param.tipo == Transacao.CREDITO) {
-            tituloPagina = '<span class=\"glyphicon glyphicon-circle-arrow-up blue\"></span> Receita';
+            tituloPagina = '<span class=\"glyphicon glyphicon-plus-sign blue\"></span> Receita';
+        } else if (param.tipo == Transacao.TRANSFERENCIA) {
+            tituloPagina = '<span class=\"glyphicon glyphicon-transfer\"></span> Transferência';
         }
         App.changeView('index', tituloPagina, function() {
             $('#dataTransacao, #dataPagamento').datepicker({
@@ -40,9 +42,21 @@ AppController = function() {
                 oThis.carregarBeneficiarios($('#beneficiario').val());
                 oThis.carregarCategorias($('#categoria').val());
                 ContaHelper.campoContas('#contas');
+                if (param.tipo == Transacao.DEBITO) {
+                    $('.opcoes_despesa').show();
+                    $('.linhaContasDestino').hide();
+                } else if (param.tipo == Transacao.TRANSFERENCIA) {
+                    ContaHelper.campoContas('#contasDestino', 0, 'Conta de origem');
+                    $('.dadosCategoria').hide();
+                    $('.opcoes_despesa').hide();
+                    $('.linhaContasDestino').show();
+
+                } else {
+                    $('.linhaContasDestino').hide();
+                    $('.opcoes_despesa').hide();
+                }
                 $('#idTransacao').val("0");
                 $('#btnApagar').hide();
-                $('.opcoes_despesa').show();
                 $('#btnShowAvancadas').click(function () {
                     $(this).slideUp();
                     $('#panelAvancadas').slideDown();
@@ -60,11 +74,6 @@ AppController = function() {
                 $('#idTransacao').val(param.id);
                 $('#btnApagar').show();
                 oThis.carregaDadosTransacao(param.id);
-            }
-            if (param.tipo == Transacao.CREDITO) {
-                $('.opcoes_despesa').hide();
-            } else {
-                $('.opcoes_despesa').show();
             }
             $('#valorTransacao').focus();
             if (param.tipo == Transacao.CREDITO) {
