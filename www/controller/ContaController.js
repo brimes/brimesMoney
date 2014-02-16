@@ -1,11 +1,19 @@
 ContaController = function() {
-    this.actionIndex = function() {
+    this.actionIndex = function(param) {
         var oThis = this;
+        if (typeof param.filtro == "undefined") {
+            var filtro = "";
+        } else {
+            var filtro = param.filtro;
+        }
         App.changeView('index', 'Contas', function() {
             $('#btnNovaConta').click(function() {
                 App.execute('conta/detalhesConta?id=0');
             });
-            oThis.carregaContas();
+            $('#btnTodasAsContas').click(function () {
+                App.execute('conta/index?filtro=all');
+            });
+            oThis.carregaContas(filtro);
         });
     };
 
@@ -29,6 +37,9 @@ ContaController = function() {
             if (params.id != 0) {
                 oThis.carregaDetalhesConta(params.id);
             }
+            $('#btnVoltar').click(function () {
+                App.execute('conta/index');
+            })
             $("#btnSalvar").click(function() {
                 if (!Util.validaCamposObrigatorios()) {
                     return false;
@@ -48,6 +59,7 @@ ContaController = function() {
                 }
                 oConta.descricao = $('#descricaoConta').val();
                 oConta.saldo_inicial = $('#saldoInicial').val();
+                oConta.status = $('#contaDesativada').is(':checked') ? Conta.STATUS_DESATIVADA : Conta.STATUS_ATIVA;
                 oConta.tipo = tipoConta;
                 if (tipoConta == Conta.TIPO_CREDITO) {
                     oConta.dia_vencimento = $('#diaVencimento').val();
@@ -91,16 +103,27 @@ ContaController = function() {
         });
     };
 
-    this.carregaContas = function(onSuccess) {
+    this.carregaContas = function(filtro) {
         var oContas = new Conta();
-        oContas.findAll('id>0', function(oContas) {
-            $('#listaContas').html("<tr><th></th><th>Conta</th><th>Saldo</th><th></th><tr>");
+        var where = "status is not " + Conta.STATUS_DESATIVADA + "";
+        if (filtro == 'all') {
+            where = "id>0"
+        }
+        oContas.findAll(where, function(oContas) {
+            $('#listaContas').html(ContaHelper.tiposContas());
+            ContaHelper.saldoTotalBanco = 0;
+            ContaHelper.saldoTotalCartao = 0;
             for (var i in oContas) {
                 var oConta = oContas[i];
-                $('#listaContas').append(ContaHelper.showLinhaConta(oConta));
+                
+                if (oConta.tipo == Conta.TIPO_DEBITO) {
+                    var target = '#labelContasBanco';
+                } else {
+                    var target = '#labelContasCartao';
+                }
+                $(ContaHelper.showLinhaConta(oConta)).insertAfter(target);
+                ContaHelper.renderSaldo(oConta, 'saldo_conta');
             }
-
-            ContaHelper.renderSaldos('saldo_conta');
 
             $('.linhaConta').click(function() {
                 App.execute('conta/transacoes?idConta=' + $(this).attr('id_conta'));
@@ -118,6 +141,9 @@ ContaController = function() {
             $('#saldoInicial').val(oConta.saldo_inicial);
             $('#diaVencimento').val(oConta.dia_vencimento);
             $('#limiteCredito').val(oConta.limite);
+            if (oConta.status == Conta.STATUS_DESATIVADA) {
+                $('#contaDesativada').attr('checked', 'checked');
+            }
             $(".btn_tipo").each(function() {
                 if ($(this).attr('tipo') == oConta.tipo) {
                     $(this).addClass("selecionado");

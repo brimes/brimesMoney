@@ -45,6 +45,7 @@ body {
 
 .btnTable {
     font-size: 20px;
+    margin-right: 10px;
 }
 
 .credito {
@@ -111,7 +112,7 @@ body {
     background-color: #fff;
 }
 
-.table th {
+.table th, .bg-info {
     background: rgb(96,108,136); /* Old browsers */
     background: -moz-linear-gradient(top,  rgba(96,108,136,1) 0%, rgba(63,76,107,1) 100%); /* FF3.6+ */
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(96,108,136,1)), color-stop(100%,rgba(63,76,107,1))); /* Chrome,Safari4+ */
@@ -167,3 +168,22 @@ body {
     padding-left: 2px;
     padding-right: 2px;
 }
+
+.footer {
+    background-color: #ddd;
+}
+
+.item-lg {
+    height: 60px;
+}
+
+button {
+    margin-right: 5px;
+}
+
+.valor_negativo {
+    color: #E81515;
+    box-sizing: content-box;
+}
+
+

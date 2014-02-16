@@ -28,13 +28,13 @@ AppController = function() {
             tituloPagina = '<span class=\"glyphicon glyphicon-circle-arrow-up blue\"></span> Receita';
         }
         App.changeView('index', tituloPagina, function() {
-            $('#dataTransacao').datepicker({
+            $('#dataTransacao, #dataPagamento').datepicker({
                 format: 'dd/mm/yyyy',
                 autoclose: true,
                 todayBtn: true,
                 todayHighlight: true
             });
-            $('#dataTransacao').attr("readonly", "readonly");
+            $('#dataTransacao, #dataPagamento').attr("readonly", "readonly");
             if (typeof param.id == 'undefined' || param.id == "0") {
                 $('#dataTransacao').val(App.converteData(App.getCurrentDate(), 'yyyy-mm-dd', 'dd/mm/yyyy'));
                 oThis.carregarBeneficiarios($('#beneficiario').val());
@@ -61,12 +61,20 @@ AppController = function() {
                 $('#btnApagar').show();
                 oThis.carregaDadosTransacao(param.id);
             }
+            if (param.tipo == Transacao.CREDITO) {
+                $('.opcoes_despesa').hide();
+            } else {
+                $('.opcoes_despesa').show();
+            }
             $('#valorTransacao').focus();
             if (param.tipo == Transacao.CREDITO) {
                 $('#beneficiario').attr('placeholder', 'Pagador');
             }
             $('#beneficiario').keyup(function() {
                 oThis.carregarBeneficiarios($('#beneficiario').val());
+            });
+            $('#pagador').keyup(function() {
+                oThis.carregarPagadores($('#pagador').val());
             });
             $('#categoria').keyup(function() {
                 oThis.carregarCategorias($('#categoria').val());
@@ -89,6 +97,7 @@ AppController = function() {
             $('#btnSalvar').click(function(e) {
                 e.stopPropagation();
                 var podeSalvar = true;
+                var tipoParcela = $('#tipo_parcelas').find('.selecionado').attr('tipo');
                 if (!Util.validaCamposObrigatorios()) {
                     return false;
                 }
@@ -107,7 +116,9 @@ AppController = function() {
                     baneficiario: $('#beneficiario').val().trim(),
                     categoria: $('#categoria').val().trim(),
                     tipo: param.tipo,
-                    conta: $('#contas').find('.selecionado').attr('id_conta')
+                    conta: $('#contas').find('.selecionado').attr('id_conta'),
+                    nrParcelas: $('#totalPercelas').val(),
+                    tipoParcelamento: tipoParcela
                 }, function() {
                     App.execute('conta/index');
                 });
@@ -131,6 +142,16 @@ AppController = function() {
             });
         });
     };
+    
+    this.carregarPagadores = function(filtro) {
+        BeneficiarioHelper.carregaBeneficiarios('#listaPagadores', filtro, function() {
+            $('#listaPagadores li').click(function() {
+                $('#pagador').val($(this).text());
+                $(this).parent().hide();
+            });
+        });
+    };
+
 
     this.carregarCategorias = function(filtro) {
         var oThis = this;

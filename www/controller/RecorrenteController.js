@@ -173,27 +173,31 @@ RecorrenteController = function() {
                 $('#listaRecorrentesReceitas').html("<li class='list-group-item'>Que pena! Nada a receber esse mês</li>");
                 return true;
             }
-            var contReceitas = 0;
-            var contDespesas = 0;
+            var totalReceita = 0;
+            var totalDespesa = 0;
 
             for (var i in oRecorrentes) {
                 var oRecorrente = oRecorrentes[i];
                 if (oRecorrente.TIPO == Transacao.DEBITO) {
-                    contDespesas++;
+                    totalDespesa += parseFloat(oRecorrente.VALOR);
                     $('#listaRecorrentesDespesas').append(RecorrenteHelper.showLinhaRecorrenteLi(oRecorrente, mes));
                 } else {
-                    contReceitas++;
+                    totalReceita += oRecorrente.VALOR;
                     $('#listaRecorrentesReceitas').append(RecorrenteHelper.showLinhaRecorrenteLi(oRecorrente, mes));
                 }
             }
 
-            if (contReceitas == 0) {
+            if (totalReceita == 0) {
                 $('#listaRecorrentesReceitas').html("<li class='list-group-item'>Que pena! Nada a receber esse mês</li>");
             }
+            $('#totalReceitas').html(UtilHelper.toValor(totalReceita))
+            
 
-            if (contDespesas == 0) {
+            if (totalDespesa == 0) {
                 $('#listaRecorrentesDespesas').html("<li class='list-group-item'>Parabéns, nenhuma conta a pagar.</li>");
             }
+            $('#totalDespesas').html(UtilHelper.toValor(totalDespesa))
+            
 
             $('.btn_editar_recorrente').click(function() {
                 $(this).parent().next().toggleClass('editar');
@@ -201,7 +205,7 @@ RecorrenteController = function() {
 
             $('.linha_recorrente').click(function() {
                 if ($(this).hasClass('recorrente_futura')) {
-                    alert("Atenção: Essa transação não pode pode ser regitrada. Registre a transação do mes anterior.");
+                    alert("Atenção: Essa transação não pode pode ser registrada. Registre a transação do mes anterior.");
                     return true;
                 }
                 if ($(this).parent().hasClass('editar')) {
@@ -227,13 +231,6 @@ RecorrenteController = function() {
                         });
                     },
                     onLoad: function() {
-                        $('#dataTransacao').datepicker({
-                            format: 'dd/mm/yyyy',
-                            autoclose: true,
-                            todayBtn: true,
-                            todayHighlight: true
-                        });
-                        $('#dataTransacao').attr("readonly", "readonly");
                         $("#dataTransacao").val(App.converteData(data, 'yyyy-mm-dd', 'dd/mm/yyyy'));
                         $("#valorTransacao").val(valor);
                         $('#lblBeneficiario').html(beneficiario);

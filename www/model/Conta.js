@@ -9,6 +9,8 @@ Conta = function() {
         data_fechamento: 'text',
         dia_vencimento: 'integer',
         limite: 'float',
+        status: 'int',
+        ult_atualizacao: 'text',
         sincronizado: 'int'
     };
     this.getSaldoAtual = function(callBack) {
@@ -123,5 +125,8 @@ Conta.getId = function(descricao, onSuccess) {
 // Tipo de conta
 Conta.TIPO_DEBITO = 0;
 Conta.TIPO_CREDITO = 1;
+
+Conta.STATUS_ATIVA = 0;
+Conta.STATUS_DESATIVADA = 1;
 
 Conta.prototype = new ModelDb();

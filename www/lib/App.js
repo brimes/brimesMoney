@@ -7,8 +7,7 @@ var App = {
     {label: "Contas", icon: "glyphicon-list-alt", action: "conta/index", inicial: true},
     {label: "Categorias", icon: "glyphicon-tag", action: "categoria/index", inicial: false},
     {label: "Transações Recorrentes", icon: "glyphicon-th-list", action: "recorrente/index", inicial: false},
-    {label: "Migrate", icon: "", action: "migrate", inicial: false},
-    {label: "Importar", icon: "", action: "importacao/index", inicial: false}
+    {label: "Migrate", icon: "", action: "migrate", inicial: false}
     ),
     aMesesExtenso: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"],
     dadosMove: {},
@@ -334,6 +333,9 @@ var App = {
         return  year + '-' + mes + '-' + dia;
     },
     incDate: function(dataBase, valor, tipo) {
+        if (valor == 0) {
+            return dataBase;
+        }
         var aData = dataBase.split("-");
         var oData = new Date(parseInt(aData[0] * 1), parseInt(aData[1] * 1) - 1, parseInt(aData[2] * 1));
         if (tipo == 'month') {
@@ -466,8 +468,9 @@ var App = {
     },
     enviaRequisicao: function(url, jsonParametros, onSuccess, onError) {
         $.ajax({
-            type: "POST",
+            type: "GET",
             url: url,
+            crossDomain: true,
             data: jsonParametros,
             success: function(data) {
                 onSuccess(data);
