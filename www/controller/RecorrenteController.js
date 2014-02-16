@@ -178,12 +178,15 @@ RecorrenteController = function() {
 
             for (var i in oRecorrentes) {
                 var oRecorrente = oRecorrentes[i];
-                if (oRecorrente.TIPO == Transacao.DEBITO) {
-                    totalDespesa += parseFloat(oRecorrente.VALOR);
-                    $('#listaRecorrentesDespesas').append(RecorrenteHelper.showLinhaRecorrenteLi(oRecorrente, mes));
-                } else {
-                    totalReceita += oRecorrente.VALOR;
-                    $('#listaRecorrentesReceitas').append(RecorrenteHelper.showLinhaRecorrenteLi(oRecorrente, mes));
+                var conteudoElement = RecorrenteHelper.showLinhaRecorrenteLi(oRecorrente, mes);
+                if (conteudoElement != "") {
+                    if (oRecorrente.TIPO == Transacao.DEBITO) {
+                        totalDespesa += parseFloat(oRecorrente.VALOR);
+                        $('#listaRecorrentesDespesas').append(conteudoElement);
+                    } else {
+                        totalReceita += oRecorrente.VALOR;
+                        $('#listaRecorrentesReceitas').append(conteudoElement);
+                    }
                 }
             }
 
