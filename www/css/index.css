@@ -186,4 +186,7 @@ button {
     box-sizing: content-box;
 }
 
-
+.saldo_em_transacao {
+    padding-top: 2px;
+    font-size: 0.8em;
+}

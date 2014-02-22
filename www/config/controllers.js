@@ -3,5 +3,6 @@ var configControllers = [
   {"nome": "conta"},
   {"nome": "categoria"},
   {"nome": "recorrente"},
-  {"nome": "importacao"}
+  {"nome": "importacao"},
+  {"nome": "adm"}
 ];

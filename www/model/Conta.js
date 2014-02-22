@@ -13,12 +13,15 @@ Conta = function() {
         ult_atualizacao: 'text',
         sincronizado: 'int'
     };
-    this.getSaldoAtual = function(callBack) {
+    this.getSaldoAtual = function(callBack, data) {
+        if (typeof data == 'undefined') {
+            data = App.getCurrentDate();
+        }
         var oThis = this;
         ORM.select({
             select: '*',
             table: 'transacao',
-            where: "id_conta = " + oThis.id + " AND data <= '" + App.getCurrentDate() + "'"
+            where: "id_conta = " + oThis.id + " AND data <= '" + data + "'"
         }, function(results) {
             var saldo = parseFloat(oThis.saldo_inicial);
             if (isNaN(saldo)) {
@@ -66,6 +69,14 @@ Conta = function() {
         });
     };
 };
+Conta.prototype = new ModelDb();
+
+// Tipo de conta
+Conta.TIPO_DEBITO = 0;
+Conta.TIPO_CREDITO = 1;
+
+Conta.STATUS_ATIVA = 0;
+Conta.STATUS_DESATIVADA = 1;
 
 Conta.getTotaldeContas = function(onSuccess, onError) {
     ORM.select({
@@ -81,7 +92,6 @@ Conta.getTotaldeContas = function(onSuccess, onError) {
         }
     });
 };
-
 Conta.atualizaSaldo = function(idConta, valor, operacao, callBack) {
     new Conta().findById(idConta, function(oConta) {
         oConta.getSaldoAtual(function (saldo) {
@@ -92,7 +102,6 @@ Conta.atualizaSaldo = function(idConta, valor, operacao, callBack) {
         });
     });
 };
-
 Conta.getId = function(descricao, onSuccess) {
     if (!isNaN(descricao)) {
         onSuccess(descricao);
@@ -121,12 +130,3 @@ Conta.getId = function(descricao, onSuccess) {
     });
 };
 
-
-// Tipo de conta
-Conta.TIPO_DEBITO = 0;
-Conta.TIPO_CREDITO = 1;
-
-Conta.STATUS_ATIVA = 0;
-Conta.STATUS_DESATIVADA = 1;
-
-Conta.prototype = new ModelDb();

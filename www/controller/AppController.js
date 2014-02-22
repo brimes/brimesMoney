@@ -123,7 +123,7 @@ AppController = function() {
                 $(this).attr("disabled", "disabled");
                 var dadosTransacao = {
                     id: $('#idTransacao').val(),
-                    data: $('#dataTransacao').val(),
+                    data: App.converteData($('#dataTransacao').val(), 'dd/mm/yyyy', 'yyyy-mm-dd'),
                     valor: $('#valorTransacao').val(),
                     baneficiario: $('#beneficiario').val().trim(),
                     categoria: $('#categoria').val().trim(),
@@ -135,6 +135,8 @@ AppController = function() {
                     dadosTransacao.conta_origem = $('#contas').find('.selecionado').attr('id_conta');
                     Transacao.efetuaTransferencia(dadosTransacao, function () {
                         App.execute('conta/index');
+                    }, function () {
+                        alert('Error ao efetuar transferencia.');
                     });
                      
                 } else {
@@ -142,6 +144,8 @@ AppController = function() {
                     dadosTransacao.tipo = param.tipo;
                     Transacao.adicionaTransacao(dadosTransacao, function() {
                         App.execute('conta/index');
+                    }, function () {
+                        alert('Error ao adicionar transacao.');
                     });
                 }
             });

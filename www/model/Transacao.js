@@ -13,6 +13,8 @@ Transacao = function() {
         transferencia: 'int', // 1 - Destino, 2 - Origem
         id_conta_transferencia: 'int',
         id_pagador: 'int',
+        status: 'int',
+        saldo_acumulado: 'float',
         sincronizado: 'int'
     };
 
@@ -21,13 +23,10 @@ Transacao = function() {
         categoria: {type: "BELONGS_TO", class: "Categoria", field: "id_categoria"},
     };
 
-    this.salvaParcela = function(parcela, jDados, callBack) {
+    this.salvaParcela = function(jDados, callBack, onError) {
         var oThis = this;
-        if (isNaN(parseInt(jDados.nrParcelas))) {
-            jDados.nrParcelas = 1;
-        }
         this.save(function() {
-            if (parcela == jDados.nrParcelas) {
+            if (oThis.parcela == oThis.total_parcelas) {
                 if (typeof jDados.noCache != 'undefined' && jDados.noCache == true) {
                     callBack();
                 } else {
@@ -38,7 +37,7 @@ Transacao = function() {
                     });
                 }
             }
-        });
+        }, onError);
 
     };
 
@@ -54,8 +53,7 @@ Transacao.TIPO_PARCELA_MULTIPLICAR = 0;
 Transacao.TRANSF_DESTINO = 1;
 Transacao.TRANSF_ORIGEM = 2;
 
-Transacao._addTransacao = function(jDados, onSuccess) {
-    var strData = App.converteData(jDados.data, 'dd/mm/yyyy', 'yyyy-mm-dd');
+Transacao._addTransacao = function(jDados, onSuccess, onError) {
     var dadosParcelas = new Array();
     if (typeof jDados.nrParcelas != 'undefined' && parseInt(jDados.nrParcelas) > 1) {
         for (var i = 1; i <= parseInt(jDados.nrParcelas); i++) {
@@ -85,7 +83,7 @@ Transacao._addTransacao = function(jDados, onSuccess) {
         }
 
         var dadosParcela = dadosParcelas[i];
-        var dataParcela = App.incDate(strData, parseInt(i), 'month');
+        var dataParcela = App.incDate(jDados.data, parseInt(i), 'month');
 
         oTransacao.data = dataParcela;
 
@@ -101,16 +99,22 @@ Transacao._addTransacao = function(jDados, onSuccess) {
             oTransacao.transferencia = jDados.transferencia;
             oTransacao.id_conta_transferencia = jDados.id_conta_transferencia;
         }
-        oTransacao.salvaParcela(dadosParcela.parcela, jDados, onSuccess);
+        oTransacao.salvaParcela(jDados, function () {
+            Transacao.atualizaSaldoAcumulado({
+                id_conta: jDados.conta,
+                depoisDe: jDados.data
+            });
+            onSuccess();
+        }, onError);
     }
 
 };
-Transacao.adicionaTransacao = function(jDados, onSuccess) {
+Transacao.adicionaTransacao = function(jDados, onSuccess, onError) {
     Beneficiario.getId(jDados.baneficiario, function(idBeneficiario) {
         Categoria.getId(jDados.categoria, function(idCategoria) {
             jDados.idBeneficiario = idBeneficiario;
             jDados.idCategoria = idCategoria;
-            Transacao._addTransacao(jDados, onSuccess);
+            Transacao._addTransacao(jDados, onSuccess, onError);
         });
     });
 };
@@ -149,7 +153,7 @@ Transacao.getTotalGastoNoPeriodoParaCategoria = function(idCategoria, callBack) 
     });
 
 };
-Transacao.efetuaTransferencia = function(jDados, onSuccess) {
+Transacao.efetuaTransferencia = function(jDados, onSuccess, onError) {
     Beneficiario.getId(jDados.baneficiario, function(idBeneficiario) {
         jDados.idBeneficiario = idBeneficiario;
         jDados.idCategoria = 0;
@@ -164,8 +168,42 @@ Transacao.efetuaTransferencia = function(jDados, onSuccess) {
             jDados.tipo = Transacao.CREDITO;
             Transacao._addTransacao(jDados, function () {
                 onSuccess();
-            });
-        });
+            }, onError);
+        }, onError);
     });
 
+};
+Transacao.atualizaSaldoAcumulado = function(jDados, callBack) {
+    if (typeof jDados.id_conta == 'undefined') {
+        return false;
+    }
+    var dataInicio = "0000-00-00";
+    if (typeof jDados.depoisDe != 'undefined') {
+        dataInicio = App.decDate(jDados.depoisDe, 1, 'day');
+    }
+    new Conta().findById(jDados.id_conta, function (oConta) {
+        oConta.getSaldoAtual(function (saldo) {
+            var saldoAcumulado = parseFloat(saldo);
+            Transacao.buscaTransacoes('id_conta = ' + jDados.id_conta + " AND data > '" + dataInicio + "'", function (aDadosTrn) {
+                for (var i in aDadosTrn) {
+                    var oDadosTrn = aDadosTrn[i]
+                    var oTransacao = new Transacao();
+                    oTransacao.carregaDados(oDadosTrn);
+                    if (oTransacao.tipo == Transacao.CREDITO) {
+                        saldoAcumulado += parseFloat(oTransacao.valor);
+                    } else {
+                        saldoAcumulado -= parseFloat(oTransacao.valor);
+                    }
+                    oTransacao.saldo_acumulado = saldoAcumulado;
+                    oTransacao.save(function () {});
+                }
+                if (typeof callBack != 'undefined') {
+                    callBack();
+                }
+            });
+        }, dataInicio);
+        
+    });
+    
+    
 };
