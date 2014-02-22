@@ -37,21 +37,24 @@ AppController = function() {
                 todayHighlight: true
             });
             $('#dataTransacao, #dataPagamento').attr("readonly", "readonly");
+            $('#tipoTransacao').val(param.tipo);
             if (typeof param.id == 'undefined' || param.id == "0") {
                 $('#dataTransacao').val(App.converteData(App.getCurrentDate(), 'yyyy-mm-dd', 'dd/mm/yyyy'));
                 oThis.carregarBeneficiarios($('#beneficiario').val());
                 oThis.carregarCategorias($('#categoria').val());
-                ContaHelper.campoContas('#contas');
                 if (param.tipo == Transacao.DEBITO) {
+                    ContaHelper.campoContas('#contas', 0, 'Conta a debitar');
                     $('.opcoes_despesa').show();
                     $('.linhaContasDestino').hide();
                 } else if (param.tipo == Transacao.TRANSFERENCIA) {
-                    ContaHelper.campoContas('#contasDestino', 0, 'Conta de origem');
+                    ContaHelper.campoContas('#contas', 0, 'Conta de origem');
+                    ContaHelper.campoContas('#contasDestino', 0, 'Conta de destino');
                     $('.dadosCategoria').hide();
                     $('.opcoes_despesa').hide();
                     $('.linhaContasDestino').show();
 
                 } else {
+                    ContaHelper.campoContas('#contas', 0, 'Conta a creditar');
                     $('.linhaContasDestino').hide();
                     $('.opcoes_despesa').hide();
                 }
@@ -118,19 +121,29 @@ AppController = function() {
                     return true;
                 }
                 $(this).attr("disabled", "disabled");
-                Transacao.adicionaTransacao({
+                var dadosTransacao = {
                     id: $('#idTransacao').val(),
                     data: $('#dataTransacao').val(),
                     valor: $('#valorTransacao').val(),
                     baneficiario: $('#beneficiario').val().trim(),
                     categoria: $('#categoria').val().trim(),
-                    tipo: param.tipo,
-                    conta: $('#contas').find('.selecionado').attr('id_conta'),
                     nrParcelas: $('#totalPercelas').val(),
                     tipoParcelamento: tipoParcela
-                }, function() {
-                    App.execute('conta/index');
-                });
+                };
+                if ($('#tipoTransacao').val() == Transacao.TRANSFERENCIA) {
+                    dadosTransacao.conta_destino = $('#contasDestino').find('.selecionado').attr('id_conta');
+                    dadosTransacao.conta_origem = $('#contas').find('.selecionado').attr('id_conta');
+                    Transacao.efetuaTransferencia(dadosTransacao, function () {
+                        App.execute('conta/index');
+                    });
+                     
+                } else {
+                    dadosTransacao.conta = $('#contas').find('.selecionado').attr('id_conta');
+                    dadosTransacao.tipo = param.tipo;
+                    Transacao.adicionaTransacao(dadosTransacao, function() {
+                        App.execute('conta/index');
+                    });
+                }
             });
         });
     };
