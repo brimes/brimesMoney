@@ -47,6 +47,10 @@ Transacao.DEBITO = 'D';
 Transacao.CREDITO = 'C';
 Transacao.TRANSFERENCIA = 'T';
 
+Transacao.STATUS_ABERTO = 0;
+Transacao.STATUS_ANALISE = 1;
+Transacao.STATUS_FECHADO = 2;
+
 Transacao.TIPO_PARCELA_DIVIDIR = 1;
 Transacao.TIPO_PARCELA_MULTIPLICAR = 0;
 
@@ -95,6 +99,7 @@ Transacao._addTransacao = function(jDados, onSuccess, onError) {
         oTransacao.id_categoria = jDados.idCategoria;
         oTransacao.id_conta = jDados.conta;
         oTransacao.tipo = jDados.tipo;
+        oTransacao.status = Transacao.STATUS_ABERTO;
         if (typeof jDados.transferencia != 'undefined') {
             oTransacao.transferencia = jDados.transferencia;
             oTransacao.id_conta_transferencia = jDados.id_conta_transferencia;
@@ -121,7 +126,7 @@ Transacao.adicionaTransacao = function(jDados, onSuccess, onError) {
 Transacao.buscaTransacoes = function(filtro, onSuccess, onError) {
     ORM.select({
         select: 't.*, b.descricao as BENEFICIARIO, c.descricao as CATEGORIA',
-        table: 'transacao t LEFT JOIN categoria c ON c.id = t.id_categoria JOIN beneficiario b ON b.id = t.id_beneficiario',
+        table: 'transacao t LEFT JOIN categoria c ON c.id = t.id_categoria LEFT JOIN beneficiario b ON b.id = t.id_beneficiario',
         where: filtro,
         order: "t.data, t.id"
     }, function(results) {

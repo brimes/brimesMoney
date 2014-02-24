@@ -1,4 +1,5 @@
 ContaController = function() {
+    this.idConta = '';
     this.actionIndex = function(param) {
         var oThis = this;
         if (typeof param.filtro == "undefined") {
@@ -76,11 +77,99 @@ ContaController = function() {
 
     this.actionTransacoes = function(params) {
         var oThis = this;
+        this.idConta = params.idConta;
         App.changeView('transacoes', 'Transações', function() {
-            oThis.carregaTransacoes(params);
+            App.addMenuExtra({
+                idElement: 'btnMarkTransacao', 
+                classBtn: 'glyphicon-ok'
+            });
+            App.addMenuExtra({
+                idElement: 'btnFiltro', 
+                classBtn: 'glyphicon-filter',
+                tipo: 'menu',
+                label: 'Filtro'
+            });
+            App.addMenuExtra({
+                idElement: 'btnTodas', 
+                classBtn: 'glyphicon-asterisk',
+                tipo: 'menu',
+                label: 'Mostrar todas'
+            });
+            
+            $('#btnMarkTransacao').click(function () {
+                oThis.habilitaMarcarTransacoes();
+            });
+            oThis.carregaTransacoes(params.idConta, {
+                status: "0, 1" 
+            });
             oThis.atualizaSaldo(params.idConta);
         });
 
+    };
+    
+    this.habilitaMarcarTransacoes = function (idConta) {
+        var oThis = this;
+        $('#transacoes').addClass('editar');
+        $('#btnMarkTransacao').fadeOut();
+        $('#btn_fixos').fadeOut(500, function () {
+            App.addMenuExtra({
+                idElement: 'btnMostrarPrincipais', 
+                classBtn: 'glyphicon-chevron-left', 
+                extraClass: 'btn_opcoes_tran'
+            });
+            App.addMenuExtra({
+                idElement: 'btnMarcarComoAberto', 
+                classBtn: 'glyphicon-unchecked', 
+                extraClass: 'btn_opcoes_tran', 
+                extraAttr: 'status="' + Transacao.STATUS_ABERTO + '"'
+            });
+            App.addMenuExtra({
+                idElement: 'btnMarcarComoAnalise', 
+                classBtn: 'glyphicon-edit', 
+                extraClass: 'btn_opcoes_tran', 
+                extraAttr: 'status="' + Transacao.STATUS_ANALISE + '"'
+            });
+            App.addMenuExtra({
+                idElement: 'btnMarcarComoFechado', 
+                classBtn: 'glyphicon-check', 
+                extraClass: 'btn_opcoes_tran', 
+                extraAttr: 'status="' + Transacao.STATUS_FECHADO + '"'
+            });
+            $('.btn_opcoes_tran').click(function () {
+                if ($(this).attr('id') == 'btnMostrarPrincipais') {
+                    oThis.voltarOpcoesGerais();
+                } else {
+                    var idsAtualizar = "";
+                    $('.icone_transacao').each(function () {
+                        if ($(this).is(':visible')) {
+                            if (idsAtualizar != "")
+                                idsAtualizar += ',';
+                            idsAtualizar += $(this).parent().parent().attr('id_transacao');
+                        }
+                    });
+                    if (idsAtualizar == '') {
+                        alert('Nenhuma transação selecionada.'); 
+                        return true;
+                    }
+                    var oTrans = new Transacao();
+                    oTrans.status = $(this).attr('status');
+                    oTrans.updateAll('id in (' + idsAtualizar + ')', function () {
+                        App.toastMessage('Transacoes atualizadas.');
+                        oThis.voltarOpcoesGerais();
+                    });
+                }
+            });
+        });
+        
+    };
+    
+    this.voltarOpcoesGerais = function () {
+        $('.icone_transacao').hide();
+        $('#transacoes').removeClass('editar');
+        $('#btn_fixos').show();
+        $('#btnMarkTransacao').show();
+        $('.btn_opcoes_tran').remove();
+        this.carregaTransacoes(this.idConta);
     };
 
     this.atualizaSaldo = function(idConta) {
@@ -90,14 +179,28 @@ ContaController = function() {
         });
     };
 
-    this.carregaTransacoes = function(params) {
-        Transacao.buscaTransacoes('id_conta = ' + params.idConta, function(oTransacoes) {
+    this.carregaTransacoes = function(idConta, jParams) {
+        if (typeof jParams == 'undefined') {
+            jParams = {};
+        }
+        var filtro = 'id_conta = ' + idConta + ' ';
+        //filtro += "AND data >= '" + App.decDate(App.getCurrentDate(), 1, 'year') + "' ";
+        if ((typeof jParams.status != 'undefined') && jParams.status != '') {
+            filtro += "AND status in (" + jParams.status + ") ";
+        }
+        
+        Transacao.buscaTransacoes(filtro, function(oTransacoes) {
+            $('#transacoes').html('');
             for (var i in oTransacoes) {
                 var oTransacao = oTransacoes[i];
                 $('#transacoes').append(ContaHelper.showLiTransacao(oTransacao));
             }
             $('.lista_transacao').click(function() {
-                App.execute('app/transacao?tipo=' + $(this).attr('tipo_transacao') + '&id=' + $(this).attr('id_transacao'));
+                if ($(this).parent().hasClass('editar')) {
+                    $(this).find('.icone_transacao').toggle();
+                } else {
+                    App.execute('app/transacao?tipo=' + $(this).attr('tipo_transacao') + '&id=' + $(this).attr('id_transacao'));
+                }
             });
             $(window).scrollTop($(document).height());
         });

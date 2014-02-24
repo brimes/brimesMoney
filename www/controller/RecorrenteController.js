@@ -226,7 +226,7 @@ RecorrenteController = function() {
                     confirm: function() {
                         Recorrente.registraRecorrente({ 
                             idRecorrente: $('#idRecorrente').val(),
-                            dataTransacao: $('#dataTransacao').val(),
+                            dataTransacao: App.converteData($('#dataTransacao').val(), 'dd/mm/yyyy', 'yyyy-mm-dd'),
                             valorTransacao: $('#valorTransacao').val()
                         }, function () {
                             App.modal('close');

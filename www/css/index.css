@@ -190,3 +190,20 @@ button {
     padding-top: 2px;
     font-size: 0.8em;
 }
+
+#btn_extras {
+    display: inline-block;
+}
+
+#btn_fixos {
+    display: inline-block;
+}
+
+.table-content {
+    display: table;
+    width: 100%;
+}
+
+.table-cell {
+    display: table-cell;
+}

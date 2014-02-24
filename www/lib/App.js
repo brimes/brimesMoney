@@ -133,6 +133,9 @@ var App = {
             viewCompleta = this.locationHome + "/view/" + this.controller + "/" + view + ".html";
             this.view = this.controller + "/" + view;
         }
+        $('#btn_extras').html('');
+        $('#btn_extra_menu').html('');
+        $('#btn_fixos').show();
         this.setConfig('ultima_action', this.actionAtual);
         this.loading(true, "Carregando");
         this.log("Abrindo view: " + viewCompleta);
@@ -219,7 +222,7 @@ var App = {
         for (var i in this.opcoesMenu) {
             var optMenu = this.opcoesMenu[i];
             if (optMenu.inicial == true) {
-                $('#btns_tela_inicial').append("<span class=\"btn btn_menu btn_navbar\" action=\"" + optMenu.action + "\"> "
+                $('#btn_fixos').append("<span class=\"btn btn_menu btn_navbar\" action=\"" + optMenu.action + "\"> "
                         + "<span class=\"glyphicon " + optMenu.icon + "\"></span>"
                         + "</span>");
             } else {
@@ -300,7 +303,7 @@ var App = {
                 .css({
             "display": "none",
         })
-                .appendTo($.mobile.pageContainer).fadeIn()
+                .appendTo($('#conteudoPagina')).fadeIn()
                 .delay(1500)
                 .fadeOut(1000, function() {
             $(this).remove();
@@ -483,6 +486,33 @@ var App = {
                 onError(textError, errorThrown, url);
             }
         });
+    },
+    addMenuExtra: function(jParams) {
+        var idElement = jParams.idElement;
+        var classBtn = jParams.classBtn;
+        var extraClass = jParams.extraClass;
+        var extraAttr = jParams.extraAttr;
+        var tipo = jParams.tipo;
+        var label = (typeof jParams.label != 'undefined') ? jParams.label : "";
+        if (typeof extraAttr == 'undefined') {
+            extraAttr = "";
+        }
+        if (typeof extraClass == 'undefined') {
+            extraClass = "";
+        }
+        if (tipo == 'menu') {
+            var strBtn = "<button type=\"button\" class=\"btn btn-default btn_menu opcao_menu " + extraClass + "\" " 
+                    + "id=\"" + idElement + "\"" 
+                    + extraAttr + ">"
+                        + "   <span class=\"glyphicon " + classBtn + "\"></span> " + label + ""
+                        + "</button>"
+            $('#btn_extra_menu').append(strBtn);
+        } else {
+            var strBtn = '<span class="btn btn_navbar ' + extraClass + '" id="' + idElement + '" ' + extraAttr + '>';
+            strBtn += '       <span class="glyphicon ' + classBtn + '"></span> ' + label;
+            strBtn += '</span>';
+            $('#btn_extras').append(strBtn);
+        }
     }
 };
 

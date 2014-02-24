@@ -83,10 +83,17 @@ ContaHelper = {
         htmlRet += "<li class='lista_transacao list-group-item'"
                 + " id_transacao='" + dadosTransacao.ID + "'"
                 + " tipo_transacao='" + dadosTransacao.TIPO + "'>"
-                + "<span class='dataExtenso'>" + dataExtenso + "</span>" 
-                + "<span class='pull-right " + destaque + "'>" + UtilHelper.toValor(dadosTransacao.VALOR) + "</span><br/>" 
+                + "<div class='table-content'>" 
+                + "  <div class='table-cell icone_transacao' style='display:none'>" 
+                + "    <span class='glyphicon glyphicon-hand-right'></span>"
+                + "  </div>" 
+                + "  <div class='table-cell'>" 
+                + "    <span class='dataExtenso'>" + dataExtenso + "</span>" 
+                + "    <span class='pull-right " + destaque + "'>" + UtilHelper.toValor(dadosTransacao.VALOR) + "</span><br/>" 
                 + dadosTransacao.BENEFICIARIO + dadosParcela 
-                + "<span class='pull-right saldo_em_transacao'>" + UtilHelper.toValorDestaque(dadosTransacao.SALDO_ACUMULADO) + "</span>" 
+                + "    <span class='pull-right saldo_em_transacao'>" + UtilHelper.toValorDestaque(dadosTransacao.SALDO_ACUMULADO) + "</span>" 
+                + "  </div>"
+                + "</div>"
                 + "</li>";
         return htmlRet;
     }

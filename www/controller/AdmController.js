@@ -4,7 +4,12 @@ AdmController = function() {
         App.changeView('index', 'Administração', function() {
             $('#btnMigrate').click(function () {
                 dbSQL.migrate(function() {
-                    alert('migrate OK');
+                    var oTrn = new Transacao();
+                    oTrn.status = Transacao.STATUS_ABERTO;
+                    oTrn.updateAll('status is null', function () {
+                        alert('migrate OK');
+                    });
+                    
                 });
             });
             $('#btnTeste').click(function () {
