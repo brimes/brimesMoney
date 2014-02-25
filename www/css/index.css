@@ -199,11 +199,37 @@ button {
     display: inline-block;
 }
 
-.table-content {
-    display: table;
+.table-100 {
     width: 100%;
 }
 
-.table-cell {
-    display: table-cell;
+.icone_transacao {
+    width: 20px;
+}
+
+.status_2 {
+    font-style: italic;
+    color: #8999D9;
+    font-weight: 200;
+}
+
+.status_2 .dataExtenso, .status_2 .desc_beneficiario{
+    text-decoration: line-through;
+}
+
+.status_1 {
+}
+
+.status_1 .dataExtenso, .status_1 .desc_beneficiario{
+    text-decoration: underline;
+}
+
+#barraFixa {
+    background-color: #FFF;
+    padding-left: 15px;
+}
+
+.transacao_futura {
+    color: #aaa;
+    font-style: italic;
 }

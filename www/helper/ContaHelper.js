@@ -77,23 +77,30 @@ ContaHelper = {
         var dataExtenso = App.dataPorExtenso(dadosTransacao.DATA);
         var destaque = (dadosTransacao.TIPO == Transacao.CREDITO) ? "destaque_credito" : "destaque_debito";
         var dadosParcela = "";
+        var classDestaque = "status_" + dadosTransacao.STATUS;
+        if (dadosTransacao.DATA > App.getCurrentDate()) {
+            classDestaque = 'transacao_futura';
+        }
         if (parseInt(dadosTransacao.TOTAL_PARCELAS) > 1) {
             dadosParcela = " - " + dadosTransacao.PARCELA + "/" + dadosTransacao.TOTAL_PARCELAS;
         }
-        htmlRet += "<li class='lista_transacao list-group-item'"
+        htmlRet += "<li class='lista_transacao list-group-item " + classDestaque + "'"
                 + " id_transacao='" + dadosTransacao.ID + "'"
+                + " valor_transacao='" + dadosTransacao.VALOR + "'"
                 + " tipo_transacao='" + dadosTransacao.TIPO + "'>"
-                + "<div class='table-content'>" 
-                + "  <div class='table-cell icone_transacao' style='display:none'>" 
-                + "    <span class='glyphicon glyphicon-hand-right'></span>"
-                + "  </div>" 
-                + "  <div class='table-cell'>" 
+                + "<table class='table-100'>" 
+                + "  <tr>" 
+                + "  <td class='icone_transacao' style='display:none'>" 
+                + "    <span class='glyphicon glyphicon-ok'></span>"
+                + "  </td>" 
+                + "  <td class=''>" 
                 + "    <span class='dataExtenso'>" + dataExtenso + "</span>" 
                 + "    <span class='pull-right " + destaque + "'>" + UtilHelper.toValor(dadosTransacao.VALOR) + "</span><br/>" 
-                + dadosTransacao.BENEFICIARIO + dadosParcela 
+                + "    <span class='desc_beneficiario'>" + dadosTransacao.BENEFICIARIO + dadosParcela + "</span>"
                 + "    <span class='pull-right saldo_em_transacao'>" + UtilHelper.toValorDestaque(dadosTransacao.SALDO_ACUMULADO) + "</span>" 
-                + "  </div>"
-                + "</div>"
+                + "  </td>"
+                + "  </tr>" 
+                + "</table>"
                 + "</li>";
         return htmlRet;
     }

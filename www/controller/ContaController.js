@@ -96,6 +96,11 @@ ContaController = function() {
                 label: 'Mostrar todas'
             });
             
+            $('#btnTodas').click(function () {
+                App.toggleMenu();
+                oThis.carregaTransacoes(oThis.idConta);
+            });
+            
             $('#btnMarkTransacao').click(function () {
                 oThis.habilitaMarcarTransacoes();
             });
@@ -109,6 +114,7 @@ ContaController = function() {
     
     this.habilitaMarcarTransacoes = function (idConta) {
         var oThis = this;
+        $('#barraFixa').html('Total selecionado: <span id="totalSelecionado"></span>');
         $('#transacoes').addClass('editar');
         $('#btnMarkTransacao').fadeOut();
         $('#btn_fixos').fadeOut(500, function () {
@@ -142,9 +148,10 @@ ContaController = function() {
                     var idsAtualizar = "";
                     $('.icone_transacao').each(function () {
                         if ($(this).is(':visible')) {
+                            var idTrn = $(this).parent().parent().parent().parent().attr('id_transacao');
                             if (idsAtualizar != "")
                                 idsAtualizar += ',';
-                            idsAtualizar += $(this).parent().parent().attr('id_transacao');
+                            idsAtualizar += idTrn;
                         }
                     });
                     if (idsAtualizar == '') {
@@ -164,12 +171,15 @@ ContaController = function() {
     };
     
     this.voltarOpcoesGerais = function () {
+        $('#barraFixa').html('');
         $('.icone_transacao').hide();
         $('#transacoes').removeClass('editar');
         $('#btn_fixos').show();
         $('#btnMarkTransacao').show();
         $('.btn_opcoes_tran').remove();
-        this.carregaTransacoes(this.idConta);
+        this.carregaTransacoes(this.idConta, {
+            status: '0,1'
+        });
     };
 
     this.atualizaSaldo = function(idConta) {
@@ -184,7 +194,6 @@ ContaController = function() {
             jParams = {};
         }
         var filtro = 'id_conta = ' + idConta + ' ';
-        //filtro += "AND data >= '" + App.decDate(App.getCurrentDate(), 1, 'year') + "' ";
         if ((typeof jParams.status != 'undefined') && jParams.status != '') {
             filtro += "AND status in (" + jParams.status + ") ";
         }
@@ -197,6 +206,20 @@ ContaController = function() {
             }
             $('.lista_transacao').click(function() {
                 if ($(this).parent().hasClass('editar')) {
+                    var tipoTrn = $(this).attr('tipo_transacao');;
+                    var valTransacao = parseFloat($(this).attr('valor_transacao'));
+                    if (tipoTrn == Transacao.DEBITO) {
+                        valTransacao = parseFloat(valTransacao) * -1;
+                    }
+                    var valorAtu = (typeof $('#totalSelecionado').attr('valor_trn') != 'undefined') ? 
+                    $('#totalSelecionado').attr('valor_trn') : 0;
+                    if ($(this).find('.icone_transacao').is(':visible')) {
+                        valorAtu = parseFloat(valorAtu) - parseFloat(valTransacao);
+                    } else {
+                        valorAtu = parseFloat(valorAtu) + parseFloat(valTransacao);
+                    }
+                    $('#totalSelecionado').attr('valor_trn', valorAtu);
+                    $('#totalSelecionado').html(UtilHelper.toValorDestaque(valorAtu));
                     $(this).find('.icone_transacao').toggle();
                 } else {
                     App.execute('app/transacao?tipo=' + $(this).attr('tipo_transacao') + '&id=' + $(this).attr('id_transacao'));

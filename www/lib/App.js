@@ -136,6 +136,7 @@ var App = {
         $('#btn_extras').html('');
         $('#btn_extra_menu').html('');
         $('#btn_fixos').show();
+        $('#barraFixa').html('');
         this.setConfig('ultima_action', this.actionAtual);
         this.loading(true, "Carregando");
         this.log("Abrindo view: " + viewCompleta);
@@ -219,6 +220,7 @@ var App = {
         });
     },
     ready: function() {
+        var oThis = this;
         for (var i in this.opcoesMenu) {
             var optMenu = this.opcoesMenu[i];
             if (optMenu.inicial == true) {
@@ -247,15 +249,7 @@ var App = {
             } else if (action == 'appClose') {
                 App.close();
             } else if (action == 'toggleMenu') {
-                if ($(this).children('span').hasClass('glyphicon-chevron-up')) {
-                    $(this).children('span').removeClass('glyphicon-chevron-up');
-                    $(this).children('span').addClass('glyphicon-chevron-down');
-                    $('#menuOpcoes').slideDown('fast');
-                } else {
-                    $(this).children('span').addClass('glyphicon-chevron-up');
-                    $(this).children('span').removeClass('glyphicon-chevron-down');
-                    $('#menuOpcoes').slideUp('fast');
-                }
+                App.toggleMenu();
             } else {
                 $("#btnMenuToggle").children('span').addClass('glyphicon-chevron-up');
                 $("#btnMenuToggle").children('span').removeClass('glyphicon-chevron-down');
@@ -263,6 +257,18 @@ var App = {
                 App.execute(action);
             }
         });
+    },
+    toggleMenu: function () {
+        if ($('#btnMenuToggle').children('span').hasClass('glyphicon-chevron-up')) {
+            $('#btnMenuToggle').children('span').removeClass('glyphicon-chevron-up');
+            $('#btnMenuToggle').children('span').addClass('glyphicon-chevron-down');
+            $('#menuOpcoes').slideDown('fast');
+        } else {
+            $('#btnMenuToggle').children('span').addClass('glyphicon-chevron-up');
+            $('#btnMenuToggle').children('span').removeClass('glyphicon-chevron-down');
+            $('#menuOpcoes').slideUp('fast');
+        }
+        
     },
     log: function(texto, tipo) {
         var debug = this.getConfig('debug');
