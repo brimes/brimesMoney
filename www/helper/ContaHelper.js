@@ -72,12 +72,16 @@ ContaHelper = {
         htmlRet += "<li class='list-group-item " + selected + "' id_conta='" + dadosConta.id + "'><span class='infoConta'>" + dadosConta.descricao + "<span class='pull-right'>" + UtilHelper.toValor(dadosConta.saldo) + "</span></span></li>";
         return htmlRet;
     },
-    showLiTransacao: function(dadosTransacao) {
+    showLiTransacao: function(dadosTransacao, exibeConta) {
         var htmlRet = "";
         var dataExtenso = App.dataPorExtenso(dadosTransacao.DATA);
         var destaque = (dadosTransacao.TIPO == Transacao.CREDITO) ? "destaque_credito" : "destaque_debito";
         var dadosParcela = "";
         var classDestaque = "status_" + dadosTransacao.STATUS;
+        var descConta = "";
+        if ((typeof exibeConta != 'undefined') && exibeConta) {
+            descConta = dadosTransacao.CONTA + ': ';
+        }
         if (dadosTransacao.DATA > App.getCurrentDate()) {
             classDestaque = 'transacao_futura';
         }
@@ -94,7 +98,7 @@ ContaHelper = {
                 + "    <span class='glyphicon glyphicon-ok'></span>"
                 + "  </td>" 
                 + "  <td class=''>" 
-                + "    <span class='dataExtenso'>" + dataExtenso + "</span>" 
+                + "    <span class='dataExtenso'>" + descConta + dataExtenso + "</span>" 
                 + "    <span class='pull-right " + destaque + "'>" + UtilHelper.toValor(dadosTransacao.VALOR) + "</span><br/>" 
                 + "    <span class='desc_beneficiario'>" + dadosTransacao.BENEFICIARIO + dadosParcela + "</span>"
                 + "    <span class='pull-right saldo_em_transacao'>" + UtilHelper.toValorDestaque(dadosTransacao.SALDO_ACUMULADO) + "</span>" 

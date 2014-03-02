@@ -4,5 +4,6 @@ var configControllers = [
   {"nome": "categoria"},
   {"nome": "recorrente"},
   {"nome": "importacao"},
-  {"nome": "adm"}
+  {"nome": "adm"},
+  {"nome": "transacao"}
 ];

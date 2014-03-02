@@ -125,8 +125,11 @@ Transacao.adicionaTransacao = function(jDados, onSuccess, onError) {
 };
 Transacao.buscaTransacoes = function(filtro, onSuccess, onError) {
     ORM.select({
-        select: 't.*, b.descricao as BENEFICIARIO, c.descricao as CATEGORIA',
-        table: 'transacao t LEFT JOIN categoria c ON c.id = t.id_categoria LEFT JOIN beneficiario b ON b.id = t.id_beneficiario',
+        select: 't.*, b.descricao as BENEFICIARIO, c.descricao as CATEGORIA, co.descricao as CONTA',
+        table: 'transacao t' 
+                + ' LEFT JOIN categoria c ON c.id = t.id_categoria' 
+                + ' LEFT JOIN beneficiario b ON b.id = t.id_beneficiario' 
+                + ' LEFT JOIN conta co ON co.id = t.id_conta',
         where: filtro,
         order: "t.data, t.id"
     }, function(results) {
@@ -145,12 +148,17 @@ Transacao.getTotalGastoNoPeriodoParaCategoria = function(idCategoria, callBack) 
     ORM.select({
         select: 't.*',
         table: 'transacao t',
-        where: "id_categoria = " + idCategoria + " AND (data >= '" + dataAtualInicio + "' AND data <= '" + dataAtualFim + "')"
+        where: "id_categoria = " + idCategoria + " " 
+                + "AND (data >= '" + dataAtualInicio + "' AND data <= '" + dataAtualFim + "')"
     }, function(results) {
         var valorTotal = 0;
         for (var i in results) {
             var res = results[i];
-            valorTotal += parseFloat(res.VALOR);
+            var valor = parseFloat(res.VALOR);
+            if (res.TIPO == Transacao.CREDITO) {
+                valor = valor * (-1);
+            } 
+            valorTotal += valor;
         }
         callBack(valorTotal);
     }, function() {

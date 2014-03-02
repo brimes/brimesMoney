@@ -70,14 +70,20 @@ CategoriaController = function () {
         oCategorias.findAll({
             order: "descricao" 
         }, function (oCategorias) {
-            $('#tblCategorias').html("<tr><th>Categoria</th><th>Planejado</th><th>Disponível</th><tr>");
+            $('#tblCategorias').html("<tr><th></th><th>Categoria</th><th>Planejado</th><th>Disponível</th><tr>");
             for (var i in oCategorias) {
                 var oCategoria = oCategorias[i];
                 $('#tblCategorias').append(CategoriaHelper.showCategoriaTr(oCategoria));
                 oThis.atualizaSaldoDaCategoria(oCategoria.id);
             }
-            $('.linhaCategoria').click(function () {
-               App.execute('categoria/detalhes?id=' + $(this).attr('id_categoria')) 
+            $('.linhaCategoria .btnEditar').click(function (e) {
+                e.stopPropagation();
+                App.execute('categoria/detalhes?id=' + $(this).parent().parent().attr('id_categoria')) 
+            });
+            $('.linhaCategoria').click(function (e) {
+                e.stopPropagation();
+                App.execute('transacao/index?idCategoria=' + $(this).attr('id_categoria') 
+                        + '&descricaoCategoria=' + $(this).find('.descricaoCategoria').html()); 
             });
         });
         

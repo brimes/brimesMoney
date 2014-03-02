@@ -1,22 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
-    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
-        <file>file:/Users/brunolima/mobile/phonegap/brimesMoney/www/controller/AppController.js</file>
-        <file>file:/Users/brunolima/mobile/phonegap/brimesMoney/www/helper/ContaHelper.js</file>
-        <file>file:/Users/brunolima/mobile/phonegap/brimesMoney/www/model/Conta.js</file>
-        <file>file:/Users/brunolima/mobile/phonegap/brimesMoney/www/view/app/index.html</file>
-        <file>file:/Users/brunolima/mobile/phonegap/brimesMoney/www/model/Transacao.js</file>
-        <file>file:/Users/brunolima/mobile/phonegap/brimesMoney/www/lib/App.js</file>
-        <file>file:/Users/brunolima/mobile/phonegap/brimesMoney/www/controller/ContaController.js</file>
-        <file>file:/Users/brunolima/mobile/phonegap/brimesMoney/www/controller/RecorrenteController.js</file>
-        <file>file:/Users/brunolima/mobile/phonegap/brimesMoney/www/helper/RecorrenteHelper.js</file>
-        <file>file:/Users/brunolima/mobile/phonegap/brimesMoney/www/lib/ModelDb.js</file>
-        <file>file:/Users/brunolima/mobile/phonegap/brimesMoney/www/css/index.css</file>
-        <file>file:/Users/brunolima/mobile/phonegap/brimesMoney/www/controller/AdmController.js</file>
-        <file>file:/Users/brunolima/mobile/phonegap/brimesMoney/www/view/adm/index.html</file>
-        <file>file:/Users/brunolima/mobile/phonegap/brimesMoney/www/config/controllers.js</file>
-        <file>file:/Users/brunolima/mobile/phonegap/brimesMoney/www/index.html</file>
-        <file>file:/Users/brunolima/mobile/phonegap/brimesMoney/www/model/Recorrente.js</file>
-    </open-files>
 </project-private>

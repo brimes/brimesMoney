@@ -233,3 +233,7 @@ button {
     color: #aaa;
     font-style: italic;
 }
+
+.linhaCategoria .btnEditar {
+    font-size: 20px;
+}
