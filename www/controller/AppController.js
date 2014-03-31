@@ -66,9 +66,9 @@ AppController = function() {
                     App.toToggle('.btn_tipo_parcela');
                     App.toToggle('.btn_tipo_pagamento', function (e) {
                         if ($(e).attr('tipo') == "0") {
-                            $('#dadosTerceiros').show();
-                        } else {
                             $('#dadosTerceiros').hide();
+                        } else {
+                            $('#dadosTerceiros').show();
                         }
                     });
                 });
@@ -142,8 +142,18 @@ AppController = function() {
                 } else {
                     dadosTransacao.conta = $('#contas').find('.selecionado').attr('id_conta');
                     dadosTransacao.tipo = param.tipo;
-                    Transacao.adicionaTransacao(dadosTransacao, function() {
-                        App.execute('conta/index');
+                    Transacao.adicionaTransacao(dadosTransacao, function(oTrn) {
+                        new Beneficiario().findById(oTrn.id_beneficiario, function (oBenefic) {
+                            oBenefic.id_ultima_categoria = oTrn.id_categoria;
+                            oBenefic.save(function () {});
+                        });
+                        if ($('#tipo_pagamento').find('.selecionado').attr('tipo') == 1) {
+                            oThis.registraPagador(function () {
+                                App.execute('recorrente/index');
+                            });  
+                        } else {
+                            App.execute('conta/index');
+                        }
                     }, function () {
                         alert('Error ao adicionar transacao.');
                     });
@@ -153,6 +163,33 @@ AppController = function() {
     };
 
     // Funções privadas - Utilizada somente nesse controller (pelo menos deveria)
+    this.registraPagador = function (callBack) {
+        var parcelas = $('#totalPercelas').val();
+        if (parcelas == "") {
+            parcelas = "1";
+        }
+        var valorTransacao = parseFloat($('#valorTransacao').val());
+        var tipoParcela = $('#tipo_parcelas').find('.selecionado').attr('tipo');
+        if (tipoParcela == Transacao.TIPO_PARCELA_DIVIDIR) {
+            valorTransacao = parseFloat(parseFloat(valorTransacao) / parseFloat(parcelas)).toFixed(2);
+        }
+        var idConta = 0;
+        Recorrente.adicionaAlteraRecorrente({
+            id: 0,
+            data: $('#dataPagamento').val(),
+            valor: valorTransacao,
+            baneficiario: $('#pagador').val().trim(),
+            categoria: $('#categoria').val().trim(),
+            tipo: Transacao.CREDITO,
+            total_parcelas: parcelas,
+            valor_fixo: 1,
+            conta: idConta
+        }, function() {
+            callBack();
+        });
+        
+    }
+    
     this.carregarBeneficiarios = function(filtro) {
         var oThis = this;
         BeneficiarioHelper.carregaBeneficiarios('#listaBeneficiarios', filtro, function() {

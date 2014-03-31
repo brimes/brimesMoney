@@ -28,12 +28,12 @@ Transacao = function() {
         this.save(function() {
             if (oThis.parcela == oThis.total_parcelas) {
                 if (typeof jDados.noCache != 'undefined' && jDados.noCache == true) {
-                    callBack();
+                    callBack(oThis);
                 } else {
                     Categoria.acrescentaNumeroTransacoes(oThis.idCategoria);
                     Beneficiario.acrescentaNumeroTransacoes(oThis.idBeneficiario, oThis.idCategoria);
                     Conta.atualizaSaldo(jDados.conta, jDados.valor, jDados.tipo, function() {
-                        callBack();
+                        callBack(oThis);
                     });
                 }
             }
@@ -104,12 +104,12 @@ Transacao._addTransacao = function(jDados, onSuccess, onError) {
             oTransacao.transferencia = jDados.transferencia;
             oTransacao.id_conta_transferencia = jDados.id_conta_transferencia;
         }
-        oTransacao.salvaParcela(jDados, function () {
+        oTransacao.salvaParcela(jDados, function (oTrn) {
             Transacao.atualizaSaldoAcumulado({
                 id_conta: jDados.conta,
                 depoisDe: jDados.data
             });
-            onSuccess();
+            onSuccess(oTrn);
         }, onError);
     }
 

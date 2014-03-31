@@ -238,6 +238,9 @@ var App = {
                     + "   <span class=\"glyphicon glyphicon-off\"></span> Encerrar"
                     + "</button>");
         }
+        $(".btn_menu").click(function (e) {
+            e.stopPropagation();
+        });
         $(".btn_menu").on('touchstart', function(event) {
             event.stopPropagation();
             event.preventDefault();
@@ -418,17 +421,30 @@ var App = {
         return  this.getCurrentDate() + ' ' + hora + ':' + minuto + ':' + segundo;
     },
     dataPorExtenso: function(data) {
+        var aData = data.split("-");
+        var oData = new Date(parseInt(aData[0] * 1), parseInt(aData[1] * 1) - 1, parseInt(aData[2] * 1));
+        var diaSemana = new Array(6);
+        diaSemana[0] = "Domingo";
+        diaSemana[1] = "Segunda";
+        diaSemana[2] = "Terça";
+        diaSemana[3] = "Quarta";
+        diaSemana[4] = "Quinta";
+        diaSemana[5] = "Sexta";
+        diaSemana[6] = "Sábado";
+        var strSemana = diaSemana[oData.getDay()];
         if (this.getCurrentDate() == data) {
             return "Hoje";
         }
-        var aData = data.split("-");
+        if (data == this.decDate(this.getCurrentDate(), 1, 'day')) {
+            return "Ontem";
+        }
         var aDataAtual = this.getCurrentDate().split("-");
         var dataAtual = new Date();
 
         if (dataAtual.getFullYear() == aData[0]) {
-            return aData[2] + " de " + this.aMesesExtenso[parseInt(aData[1] * 1) - 1];
+            return strSemana + ", " + aData[2] + " de " + this.aMesesExtenso[parseInt(aData[1] * 1) - 1];
         } else {
-            return aData[2] + " de " + this.aMesesExtenso[parseInt(aData[1] * 1) - 1] + "/" + aData[0];
+            return strSemana + ", " + aData[2] + " de " + this.aMesesExtenso[parseInt(aData[1] * 1) - 1] + "/" + aData[0];
         }
 
     },
