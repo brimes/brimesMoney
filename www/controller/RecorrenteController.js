@@ -243,6 +243,20 @@ RecorrenteController = function() {
                         $('#btnDataAtual').unbind().click(function () {
                            $("#dataTransacao").val(App.getCurrentDate('dd/mm/yyyy')); 
                         });
+                        new Conta().findAll("status is not " + Conta.STATUS_DESATIVADA, function (oContas) {
+                            for (var i in oContas) {
+                                var oConta = oContas[i];
+                                $('#listaDeContas').append("<li>" 
+                                        + "<a href='#' class='opcaoConta' id_conta='" + oConta.id + "'>" 
+                                        + oConta.descricao + "</a></li>");
+                            }
+                            $('#listaDeContas').append("<li class='divider'></li><li>" 
+                                    + "<a href='#' class='opcaoConta' id_conta='0'>Nenhuma conta</a></li>");
+                            $('.opcaoConta').click(function () {
+                                $('#lblConta').html($(this).html());
+                            });
+                        });
+                        
                     }
 
                 });
