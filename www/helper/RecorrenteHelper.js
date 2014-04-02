@@ -26,7 +26,7 @@ RecorrenteHelper = {
         }
 
         htmlRet += "<li class='list-group-item linha_recorrente" + (diffMeses > 0 ? " recorrente_futura" : "") + " " + extraClass + " ' "
-                + "id_recorrente='" + dados.ID + "'>"
+                + "id_recorrente='" + dados.ID + "' id_conta='" + dados.ID_CONTA + "'>"
                 + "<span class='dataExtenso' data-completa='" + dados.DATA + "'>" + dataExtenso + "</span> " + parcelas
                 + "<span class='pull-right " + destaque + "'>"
                 + "  <span class='prefix'>" + prefix + "</span>"

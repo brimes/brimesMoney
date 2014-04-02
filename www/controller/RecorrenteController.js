@@ -221,13 +221,18 @@ RecorrenteController = function() {
                 var beneficiario = $(this).find(".ds-beneficiario").text();
                 var categoria = $(this).find(".ds-categoria").text();
                 var id_recorrente = $(this).attr('id_recorrente');
+                var id_conta = $(this).attr('id_conta');
+                if (id_conta == 0) {
+                    conta = "Nenhuma conta";
+                }
                 App.modal('_registra_recorrente', {
                     title: "TRN. Recorrente",
                     confirm: function() {
                         Recorrente.registraRecorrente({ 
                             idRecorrente: $('#idRecorrente').val(),
                             dataTransacao: App.converteData($('#dataTransacao').val(), 'dd/mm/yyyy', 'yyyy-mm-dd'),
-                            valorTransacao: $('#valorTransacao').val()
+                            valorTransacao: $('#valorTransacao').val(),
+                            idConta: $('#idConta').val()
                         }, function () {
                             App.modal('close');
                             App.execute('recorrente/index');
@@ -240,6 +245,7 @@ RecorrenteController = function() {
                         $('#lblConta').html(conta);
                         $('#lblCategoria').html(categoria);
                         $('#idRecorrente').val(id_recorrente);
+                        $('#idConta').val(id_conta);
                         $('#btnDataAtual').unbind().click(function () {
                            $("#dataTransacao").val(App.getCurrentDate('dd/mm/yyyy')); 
                         });
@@ -254,6 +260,7 @@ RecorrenteController = function() {
                                     + "<a href='#' class='opcaoConta' id_conta='0'>Nenhuma conta</a></li>");
                             $('.opcaoConta').click(function () {
                                 $('#lblConta').html($(this).html());
+                                $('#idConta').val($(this).attr('id_conta'));
                             });
                         });
                         

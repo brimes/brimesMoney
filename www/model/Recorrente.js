@@ -58,6 +58,24 @@ Recorrente.adicionaAlteraRecorrente = function(jDados, onSuccess) {
     });
 };
 
+Recorrente.proximaRecorrente = function (oRecorrente, onSuccess) {
+    var parcela = oRecorrente.parcela ? oRecorrente.parcela : 1;
+    if (oRecorrente.total_parcelas > 0) {
+        if (parcela == oRecorrente.total_parcelas) {
+            oRecorrente.excluido = 1;
+        } else {
+            oRecorrente.parcela = parseInt(parcela) + 1;
+            oRecorrente.data = App.incDate(oRecorrente.data, 1, 'month');
+        }
+    } else {
+        oRecorrente.data = App.incDate(oRecorrente.data, 1, 'month');
+    }
+    oRecorrente.save(function () {
+        onSuccess();
+    });
+    
+};
+
 Recorrente.registraRecorrente = function(jDados, onSuccess, onError) {
     var oRecorrente = new Recorrente();
     if (typeof jDados.idRecorrente == 'undefined') {
@@ -68,28 +86,19 @@ Recorrente.registraRecorrente = function(jDados, onSuccess, onError) {
     }
     
     oRecorrente.findById(jDados.idRecorrente, function(oRecorrente) {
+        if (jDados.idConta == 0) {
+            Recorrente.proximaRecorrente(oRecorrente, onSuccess);
+            return true;
+        } 
         Transacao.adicionaTransacao({
             data: jDados.dataTransacao,
             valor: jDados.valorTransacao,
             baneficiario: oRecorrente.id_beneficiario,
             categoria: oRecorrente.id_categoria,
             tipo: oRecorrente.tipo,
-            conta: oRecorrente.id_conta
+            conta: jDados.idConta
         }, function() {
-            var parcela = oRecorrente.parcela ? oRecorrente.parcela : 1;
-            if (oRecorrente.total_parcelas > 0) {
-                if (parcela == oRecorrente.total_parcelas) {
-                    oRecorrente.excluido = 1;
-                } else {
-                    oRecorrente.parcela = parseInt(parcela) + 1;
-                    oRecorrente.data = App.incDate(oRecorrente.data, 1, 'month');
-                }
-            } else {
-                oRecorrente.data = App.incDate(oRecorrente.data, 1, 'month');
-            }
-            oRecorrente.save(function () {
-                onSuccess();
-            });
+            Recorrente.proximaRecorrente(oRecorrente, onSuccess);
         });
     });
 };
