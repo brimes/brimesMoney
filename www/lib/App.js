@@ -560,6 +560,9 @@ var App = {
             this.execSeq.pointer++;
             eval(exec);
         }
+    },
+    execSequenceGetPointer: function () {
+        return this.execSeq.pointer;
     }
 };
 

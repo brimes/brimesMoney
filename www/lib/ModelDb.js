@@ -197,6 +197,14 @@ ModelDb = function() {
 
         });
     };
+    
+    this.toJson = function () {
+        var jResp = {};
+        for (var campo in this.columns) {
+            eval('jResp.' + campo + ' = this.' + campo + ';');
+        }
+        return jResp;
+    };
 };
 
 

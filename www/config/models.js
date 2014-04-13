@@ -3,5 +3,6 @@ var configModels = new Array(
   {"nome" : "categoria", "db" : true},
   {"nome" : "conta", "db" : true},
   {"nome" : "transacao", "db" : true},
-  {"nome" : "recorrente", "db" : true}
+  {"nome" : "recorrente", "db" : true},
+  {"nome" : "api", "db" : false}
 );

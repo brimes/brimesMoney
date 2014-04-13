@@ -28,11 +28,17 @@ AdmController = function() {
                     }
                 });
             });
-            $('#btnSincronizar').click(function () {
-                App.execSequenceNew(oThis);
-                App.execSequenceAddFunction("teste1()");
-                App.execSequenceAddFunction("teste2()");
-                App.execSequenceStart();
+            $('#btnSincronizar').click(function() {
+                var oConfig = JSON.parse(App.getConfig('configuracao'));
+                oApi = new Api();
+                oApi.email = oConfig.email;
+                oApi.sincroniza(function(jResponse) {
+                    if (!jResponse.status) {
+                        alert(jResponse.msg);
+                        return true;
+                    }
+                    console.log(jResponse);
+                });
             });
             $('#btnSalvarConfig').click(function() {
                 var oConf = {};
@@ -41,16 +47,6 @@ AdmController = function() {
                 alert('salvo ' + JSON.stringify(oConf));
             });
         });
-    };
-    
-    this.teste1 = function () {
-        alert('ok 1');
-        App.execSequenceNext();
-    };
-
-    this.teste2 = function () {
-        alert('ok 2');
-        App.execSequenceNext();
     };
 
 };
