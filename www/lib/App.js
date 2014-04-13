@@ -17,6 +17,7 @@ var App = {
     controller: "",
     view: "",
     locationHome: Util.dirname(location.href),
+    execSeq: {},
     init: function() {
         dbSQL.init(); // iniciando o SQL
         this.parseParamsURL();
@@ -238,7 +239,7 @@ var App = {
                     + "   <span class=\"glyphicon glyphicon-off\"></span> Encerrar"
                     + "</button>");
         }
-        $(".btn_menu").click(function (e) {
+        $(".btn_menu").click(function(e) {
             e.stopPropagation();
         });
         $(".btn_menu").on('touchstart', function(event) {
@@ -261,7 +262,7 @@ var App = {
             }
         });
     },
-    toggleMenu: function () {
+    toggleMenu: function() {
         if ($('#btnMenuToggle').children('span').hasClass('glyphicon-chevron-up')) {
             $('#btnMenuToggle').children('span').removeClass('glyphicon-chevron-up');
             $('#btnMenuToggle').children('span').addClass('glyphicon-chevron-down');
@@ -271,7 +272,7 @@ var App = {
             $('#btnMenuToggle').children('span').removeClass('glyphicon-chevron-down');
             $('#menuOpcoes').slideUp('fast');
         }
-        
+
     },
     log: function(texto, tipo) {
         var debug = this.getConfig('debug');
@@ -492,9 +493,15 @@ var App = {
     trim: function(str) {
         return str.replace(/^\s+|\s+$/g, "");
     },
-    enviaRequisicao: function(url, jsonParametros, onSuccess, onError) {
+    enviaRequisicao: function(url, jsonParametros, onSuccess, onError, options) {
+        var typeReq = "POST";
+        if (typeof options != 'undefined') {
+            if (typeof options.type != 'undefined')
+                typeReq = options.type;
+        }
+
         $.ajax({
-            type: "GET",
+            type: typeReq,
             url: url,
             crossDomain: true,
             data: jsonParametros,
@@ -523,17 +530,35 @@ var App = {
             extraClass = "";
         }
         if (tipo == 'menu') {
-            var strBtn = "<button type=\"button\" class=\"btn btn-default btn_menu opcao_menu " + extraClass + "\" " 
-                    + "id=\"" + idElement + "\"" 
+            var strBtn = "<button type=\"button\" class=\"btn btn-default btn_menu opcao_menu " + extraClass + "\" "
+                    + "id=\"" + idElement + "\""
                     + extraAttr + ">"
-                        + "   <span class=\"glyphicon " + classBtn + "\"></span> " + label + ""
-                        + "</button>"
+                    + "   <span class=\"glyphicon " + classBtn + "\"></span> " + label + ""
+                    + "</button>"
             $('#btn_extra_menu').append(strBtn);
         } else {
             var strBtn = '<span class="btn btn_navbar ' + extraClass + '" id="' + idElement + '" ' + extraAttr + '>';
             strBtn += '       <span class="glyphicon ' + classBtn + '"></span> ' + label;
             strBtn += '</span>';
             $('#btn_extras').append(strBtn);
+        }
+    },
+    execSequenceNew: function(obj) {
+        this.execSeq.obj = obj;
+        this.execSeq.queue = new Array();
+    },
+    execSequenceAddFunction: function(nameFuntion) {
+        this.execSeq.queue.push(nameFuntion);
+    },
+    execSequenceStart: function() {
+        this.execSeq.pointer = 0;
+        this.execSequenceNext();
+    },
+    execSequenceNext: function() {
+        if (typeof this.execSeq.queue[this.execSeq.pointer] != 'undefined') {
+            var exec = 'this.execSeq.obj.' + this.execSeq.queue[this.execSeq.pointer] + ';';
+            this.execSeq.pointer++;
+            eval(exec);
         }
     }
 };
