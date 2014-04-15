@@ -201,7 +201,17 @@ ModelDb = function() {
     this.toJson = function () {
         var jResp = {};
         for (var campo in this.columns) {
-            eval('jResp.' + campo + ' = this.' + campo + ';');
+            var nomeCampo = campo;
+            if (campo == 'sincronizado') {
+                nomeCampo = "";
+            }
+            
+            if (campo == 'id') {
+                nomeCampo = 'p_id';
+            }
+            
+            if (nomeCampo != '')
+                eval('jResp.' + nomeCampo + ' = this.' + campo + ';');
         }
         return jResp;
     };
