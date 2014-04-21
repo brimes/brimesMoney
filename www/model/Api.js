@@ -21,6 +21,7 @@ Api = function() {
         App.execSequenceAddFunction("sincBeneficiarios(function () { App.execSequenceNext(); })");
         App.execSequenceAddFunction("sincCategorias(function () { App.execSequenceNext(); })");
         App.execSequenceAddFunction("sincRecorrentes(function () { App.execSequenceNext(); })");
+        App.execSequenceAddFunction("sincTransacoes(function () { App.execSequenceNext(); })");
         App.execSequenceAddFunction("done(function () { App.execSequenceNext(); })");
         App.execSequenceStart();
 
@@ -101,11 +102,33 @@ Api = function() {
         }, callBack);
     };
 
+    this.sincTransacoes = function(callBack) {
+        var oThis = this;
+        this._sinc({
+            nameSinc: "sincTransacoes",
+            msg: "Sincronizando transações",
+            model: 'Transacao',
+            api: 'transacoes.json',
+            limit: 5,
+            skipOnError: true
+        }, function() {
+            new Transacao().count('sincronizado is not 1', function (total) {
+                if (total > 0) {
+                    oThis.sincTransacoes(callBack);
+                } else {
+                    callBack();
+                }
+            }, function () {
+               alert('Erro ao buscar transacoes para sincroniar'); 
+            });
+        });
+    };
+
     this._sinc = function(params, callBack) {
         for (var field in params) {
             eval('var ' + field + ' = params[field];');
         }
-        
+
         this.currentFunction.name = nameSinc;
         this.currentFunction.pointer = App.execSequenceGetPointer();
         var oThis = this;
@@ -115,8 +138,16 @@ Api = function() {
             data: null,
             api: oThis
         });
+        var filtro = 'sincronizado is not 1';
+        if (typeof limit != 'undefined') {
+            filtro = {
+                conditions: 'sincronizado is not 1',
+                limit: limit
+            };
+        }
+
         eval('_oModel = new ' + model + '();');
-        _oModel.findAll('sincronizado is not 1', function(_oModelResps) {
+        _oModel.findAll(filtro, function(_oModelResps) {
             if (_oModelResps.length == 0) {
                 oThis.onProgress({
                     status: true,
@@ -172,7 +203,9 @@ Api = function() {
                     },
                     api: oThis
                 });
-                callBack();
+                if ((typeof params.skipOnError == 'undefined') || params.skipOnError != true) {
+                    callBack();
+                }
             });
         });
     };

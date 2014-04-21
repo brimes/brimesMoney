@@ -6,12 +6,16 @@ ModelDb = function() {
         var oModel = this;
         var where = null;
         var order = null;
+        var limit = null;
         if (typeof params == 'object') {
             if (typeof params.conditions != 'undefined') {
                 where = params.conditions;
             }
             if (typeof params.order != 'undefined') {
                 order = params.order;
+            }
+            if (typeof params.limit != 'undefined') {
+                limit = params.limit;
             }
         } else {
            where = params;
@@ -21,7 +25,8 @@ ModelDb = function() {
             select: "*",
             table: this.table,
             where: where,
-            order: order
+            order: order,
+            limit: limit
         }, function(rets) {
             var aResults = new Array();
             if (rets.length > 0) {
@@ -215,6 +220,31 @@ ModelDb = function() {
         }
         return jResp;
     };
+
+    this.count = function(params, fnSuccess, fnError) {
+        var oModel = this;
+        var where = params;
+        ORM.select({
+            select: "count(*) as TOTAL",
+            table: this.table,
+            where: where
+        }, function(rets) {
+            var total = 0;
+            if (rets.length > 0) {
+                for (var i in rets) {
+                    total = rets[i].TOTAL;
+                }
+            }
+            fnSuccess(total);
+        }, function(error) {
+            if (typeof fnError !== 'undefined') {
+                fnError(error);
+            } else {
+                alert("Erro ao carregar dados da tabela " + oModel.table + " com a condicao " + where);
+            }
+        });
+    };
+
 };
 
 
