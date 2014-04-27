@@ -74,6 +74,9 @@ ModelDb = function() {
 
     this.save = function(onSuccess, onError) {
         var oThis = this;
+        if (typeof oThis.sincronizado == 'undefined') {
+            oThis.sincronizado = 0;
+        }
         if (this.isNewRecord) {
             ORM.insert(this, function(model) {
                 model.isNewRecord = false;

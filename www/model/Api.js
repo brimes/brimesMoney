@@ -1,7 +1,7 @@
 Api = function() {
-    this.host = "localhost:3000";
-    this.email = "brunodelima@gmail.com";
-    this.token = "132jdh38j73ge234rfwer33f2wwsd";
+    this.host = "";
+    this.email = "";
+    this.token = "";
     this._keyApi = null;
     this.currentFunction = {};
     this.onProgress = function() {
@@ -80,7 +80,7 @@ Api = function() {
             nameSinc: "sincBeneficiarios",
             msg: "Sincronizando beneficiários",
             model: 'Beneficiario',
-            api: 'beneficiarios.json'
+            api: 'beneficiarios.json',
         }, callBack);
     };
 
@@ -109,7 +109,7 @@ Api = function() {
             msg: "Sincronizando transações",
             model: 'Transacao',
             api: 'transacoes.json',
-            limit: 5,
+            limit: 200,
             skipOnError: true
         }, function() {
             new Transacao().count('sincronizado is not 1', function (total) {
