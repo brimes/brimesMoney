@@ -27,6 +27,27 @@ Api = function() {
 
     };
 
+    this.baixar = function(onProgress) {
+        this.onProgress = onProgress;
+        onProgress({
+            status: true,
+            data: null,
+            msg: "Iniciando sincronizacao",
+            api: this
+        });
+        App.execSequenceNew(this);
+        App.execSequenceAddFunction("initialize(function () { App.execSequenceNext(); })");
+        App.execSequenceAddFunction("baixaContas(function () { App.execSequenceNext(); })");
+        App.execSequenceAddFunction("baixaBeneficiarios(function () { App.execSequenceNext(); })");
+        App.execSequenceAddFunction("baixaCategorias(function () { App.execSequenceNext(); })");
+        App.execSequenceAddFunction("baixaRecorrentes(function () { App.execSequenceNext(); })");
+        App.execSequenceAddFunction("baixaTransacoes(function () { App.execSequenceNext(); })");
+        App.execSequenceAddFunction("done(function () { App.execSequenceNext(); })");
+        App.execSequenceStart();
+
+    };
+
+
     this.initialize = function(callBack) {
         this.currentFunction.name = "initialize";
         this.currentFunction.pointer = App.execSequenceGetPointer();
@@ -123,6 +144,51 @@ Api = function() {
             });
         });
     };
+    
+    this.baixaContas = function(callBack) {
+        this._baixa({
+            nameSinc: "baixaContas",
+            msg: "Baixando contas",
+            model: 'Conta',
+            api: 'get_contas.json'
+        }, callBack);
+    };
+
+    this.baixaBeneficiarios = function(callBack) {
+        this._baixa({
+            nameSinc: "baixaBenericiarios",
+            msg: "Baixando beneficiarios",
+            model: 'Beneficiario',
+            api: 'get_beneficiarios.json'
+        }, callBack);
+    };
+
+    this.baixaCategorias = function(callBack) {
+        this._baixa({
+            nameSinc: "baixaCategorias",
+            msg: "Baixando categorias",
+            model: 'Categoria',
+            api: 'get_categorias.json'
+        }, callBack);
+    };
+
+    this.baixaRecorrentes = function(callBack) {
+        this._baixa({
+            nameSinc: "baixaRecorrentes",
+            msg: "Baixando recorrentes",
+            model: 'Recorrente',
+            api: 'get_recorrentes.json'
+        }, callBack);
+    };
+
+    this.baixaTransacoes = function(callBack) {
+        this._baixa({
+            nameSinc: "baixaTransacoes",
+            msg: "Baixando transacoes",
+            model: 'Transacao',
+            api: 'get_transacoes.json'
+        }, callBack);
+    };
 
     this._sinc = function(params, callBack) {
         for (var field in params) {
@@ -210,6 +276,66 @@ Api = function() {
         });
     };
 
+    this._baixa = function(params, callBack) {
+        for (var field in params) {
+            eval('var ' + field + ' = params[field];');
+        }
+
+        this.currentFunction.name = nameSinc;
+        this.currentFunction.pointer = App.execSequenceGetPointer();
+        var oThis = this;
+        oThis.onProgress({
+            status: true,
+            msg: msg,
+            data: null,
+            api: oThis
+        });
+        var filtro = 'sincronizado is not 1';
+        if (typeof limit != 'undefined') {
+            filtro = {
+                conditions: 'sincronizado is not 1',
+                limit: limit
+            };
+        }
+        eval('_oModel = new ' + model + '();');
+
+        App.enviaRequisicao('http://' + oThis.host + '/api/' + api, {
+            user: {
+                email: oThis.email,
+                token: oThis.token,
+                keyApi: oThis._keyApi
+            }
+        }, function(data) {
+            console.log(data);
+            if (data.status == 'OK') {
+                _oModel.importaJson(data.resp, function () {
+                    callBack();
+                });
+            } else {
+                oThis.onProgress({
+                    status: false,
+                    msg: "Erro na resposta do servidor",
+                    data: data,
+                    api: oThis
+                });
+            }
+        }, function(textError, errorThrown, url) {
+            oThis.onProgress({
+                status: false,
+                msg: "Error: " + msg,
+                data: {
+                    error: errorThrown,
+                    msg: textError,
+                    url: url
+                },
+                api: oThis
+            });
+            if ((typeof params.skipOnError == 'undefined') || params.skipOnError != true) {
+                callBack();
+            }
+        });
+
+    };
 
     this.done = function(callBack) {
         this.currentFunction.name = "done";

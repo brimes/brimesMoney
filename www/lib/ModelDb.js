@@ -74,9 +74,7 @@ ModelDb = function() {
 
     this.save = function(onSuccess, onError) {
         var oThis = this;
-        if (typeof oThis.sincronizado == 'undefined') {
-            oThis.sincronizado = 0;
-        }
+        oThis.sincronizado = 0;
         if (this.isNewRecord) {
             ORM.insert(this, function(model) {
                 model.isNewRecord = false;
@@ -154,13 +152,14 @@ ModelDb = function() {
             if (limpaAntes === true) {
                 tx.executeSql("DELETE FROM " + oModel.table.toUpperCase() + "");
             }
-            for (idServidor in arrayDeDados) {
+            for (var idServidor in arrayDeDados) {
                 var valorCampo = "";
                 var camposInsert = "";
                 var valoresInsert = "";
                 var dados = arrayDeDados[idServidor];
-                for (campo in dados) {
-                    if ((campo !== 'id') && (typeof oModel.columns[campo] !== 'undefined')) {
+                for (var campo in dados) {
+                    if ((campo == 'p_id') || (typeof oModel.columns[campo] !== 'undefined')) {
+                        
                         if (oModel.columns[campo] === 'text') {
                             valorCampo = "'" + dados[campo] + "'";
                         } else {
@@ -177,7 +176,11 @@ ModelDb = function() {
                         if (valoresInsert !== "") {
                             valoresInsert += ",";
                         }
-                        camposInsert += campo;
+                        if (campo == 'p_id') {
+                            camposInsert += 'id';
+                        } else {
+                            camposInsert += campo;
+                        }
                         valoresInsert += valorCampo;
                     }
                 }
@@ -191,12 +194,12 @@ ModelDb = function() {
                         camposInsert += 'sincronizado';
                         valoresInsert += '1';
                 }
-                var qryInsert = "INSERT OR REPLACE INTO " + oModel.table.toUpperCase() + " (id, " + camposInsert + ") VALUES ( " + idServidor + ", " + valoresInsert + ")";
+                var qryInsert = "INSERT OR REPLACE INTO " + oModel.table.toUpperCase() + " (" + camposInsert + ") VALUES (" + valoresInsert + ")";
                 tx.executeSql(qryInsert, [], function() {
 
                 }, function(tx, error) {
-                    QuesterApp.log(error.message, 'error');
-                    QuesterApp.debug(error);
+                    App.log(error.message, 'error');
+                    App.debug(error);
                     alert('Erro ao inserir registro ' + qryInsert);
                 });
             }
@@ -244,6 +247,30 @@ ModelDb = function() {
                 fnError(error);
             } else {
                 alert("Erro ao carregar dados da tabela " + oModel.table + " com a condicao " + where);
+            }
+        });
+    };
+    
+    this.atualizaSeq = function(fnSuccess, fnError) {
+        var oModel = this;
+        ORM.select({
+            select: "max(id) as MAX",
+            table: this.table
+        }, function(rets) {
+            var maxId = 0;
+            if (rets.length > 0) {
+                for (var i in rets) {
+                    maxId = rets[i].MAX;
+                }
+            }
+            var novoId = maxId + 1;
+            App.setConfig('seq_' + oModel.table, novoId);
+            fnSuccess(novoId);
+        }, function(error) {
+            if (typeof fnError !== 'undefined') {
+                fnError(error);
+            } else {
+                alert("Erro ao atualizar sequencia. Tabela: " + oModel.table);
             }
         });
     };
