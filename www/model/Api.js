@@ -59,19 +59,36 @@ Api = function() {
             api: oThis
         });
         App.enviaRequisicao('http://' + this.host + '/api/start.json', {
+            device: {
+                name: App.getInfoDevice("name"),
+                uuid: App.getInfoDevice("uuid"),
+                platform: App.getInfoDevice("platform"),
+                framework: App.getInfoDevice("cordova"),
+                model: App.getInfoDevice("model"),
+                versao: App.getInfoDevice("version")
+            },
             user: {
                 email: this.email,
                 token: this.token
             }
         }, function(data) {
-            oThis._keyApi = data._id.$oid;
-            oThis.onProgress({
-                status: true,
-                msg: "OK",
-                data: data,
-                api: oThis
-            });
-            callBack();
+            if (data.status == "OK") {
+                oThis._keyApi = data.id_api.$oid;
+                oThis.onProgress({
+                    status: true,
+                    msg: "OK",
+                    data: data,
+                    api: oThis
+                });
+                callBack();
+            } else {
+                oThis.onProgress({
+                    status: true,
+                    msg: "Dispositivo bloqueado",
+                    data: data,
+                    api: oThis
+                });
+            }
         }, function(textError, errorThrown, url) {
             oThis.onProgress({
                 status: false,
@@ -83,7 +100,6 @@ Api = function() {
                 },
                 api: oThis
             });
-            callBack();
         });
     };
 

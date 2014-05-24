@@ -561,8 +561,17 @@ var App = {
             eval(exec);
         }
     },
-    execSequenceGetPointer: function () {
+    execSequenceGetPointer: function() {
         return this.execSeq.pointer;
+    },
+    getInfoDevice: function(name) {
+        eval("var info = device." + name + ";");
+        if (typeof info != 'undefined') {
+            return info;
+        } else {
+            return "DESCONHECIDO";
+        }
+
     }
 };
 
