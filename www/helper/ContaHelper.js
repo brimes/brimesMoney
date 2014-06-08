@@ -41,26 +41,33 @@ ContaHelper = {
     },
     showLinhaConta: function(dadosConta) {
         var htmlRet = "";
+        var label = (dadosConta.tipo == Conta.TIPO_DEBITO) ? "Fim do mês" : "Proxima fatura";
         htmlRet += "<li class='list-group-item item-lg linhaConta' id_conta='" + dadosConta.id + "'>"
                 + "   <span class='pull-left'><span class=\"glyphicon glyphicon-edit btnTable btnEditar\"></span></span>"
                 + "   <span class='infoConta pull-left'>" 
                 + "    " + dadosConta.descricao + "<br/>"
-                + "    <span id='saldo_conta" + dadosConta.id + "'></span>" 
                 + "   </span>"
+                + "   <span class='pull-right'><span class='infoSmall'>" + label + "</span> <span id='saldo_conta" + dadosConta.id + "'></span></span>" 
+                + "   <br/>"
+                + "   <span><span class='infoSmall'>Total</span> <span id='saldo_conta_total" + dadosConta.id + "'></span></span>" 
                 + " </li>";
         return htmlRet;
     },
     renderSaldo: function(oConta, elementArray) {
         var oThis = this;
         oConta.getSaldoFinalDoMes(function(saldo) {
-            $('#' + elementArray + "" + oConta.id + "").html(UtilHelper.toValorDestaque(saldo));
-            if (oConta.tipo == Conta.TIPO_DEBITO) {
-                oThis.saldoTotalBanco += parseFloat(saldo);
-                $('#saldoTotalBanco').html(UtilHelper.toValorDestaque(oThis.saldoTotalBanco));
-            } else {
-                oThis.saldoTotalCartao += parseFloat(saldo);
-                $('#saldoTotalCartao').html(UtilHelper.toValorDestaque(oThis.saldoTotalCartao));
-            }
+            Recorrente.getTotalPrevistoMes(oConta.id, function (totalPrevisto) {
+                var saldoFinal = (parseFloat(saldo) + parseFloat(totalPrevisto));
+                $('#' + elementArray + "" + oConta.id + "").html(UtilHelper.toValorDestaque(saldoFinal));
+                $('#' + elementArray + "_total" + oConta.id + "").html(UtilHelper.toValorDestaque(saldo));
+                if (oConta.tipo == Conta.TIPO_DEBITO) {
+                    oThis.saldoTotalBanco += saldoFinal;
+                    $('#saldoTotalBanco').html(UtilHelper.toValorDestaque(oThis.saldoTotalBanco));
+                } else {
+                    oThis.saldoTotalCartao += saldoFinal;
+                    $('#saldoTotalCartao').html(UtilHelper.toValorDestaque(oThis.saldoTotalCartao));
+                }
+            });
         });
     },
     showLinhaContaLi: function(dadosConta, isSelected) {
@@ -79,6 +86,7 @@ ContaHelper = {
         var dadosParcela = "";
         var classDestaque = "status_" + dadosTransacao.STATUS;
         var descConta = "";
+        var classSync = (dadosTransacao.SINCRONIZADO == 1) ? "hide" : "red";
         if ((typeof exibeConta != 'undefined') && exibeConta) {
             descConta = dadosTransacao.CONTA + ': ';
         }
@@ -98,6 +106,7 @@ ContaHelper = {
                 + "    <span class='glyphicon glyphicon-ok'></span>"
                 + "  </td>" 
                 + "  <td class=''>" 
+                + "    <span class='glyphicon glyphicon-upload icon-small " + classSync + "'></span>"
                 + "    <span class='dataExtenso'>" + descConta + dataExtenso + "</span>" 
                 + "    <span class='pull-right " + destaque + "'>" + UtilHelper.toValor(dadosTransacao.VALOR) + "</span><br/>" 
                 + "    <span class='desc_beneficiario'>" + dadosTransacao.BENEFICIARIO + dadosParcela + "</span>"

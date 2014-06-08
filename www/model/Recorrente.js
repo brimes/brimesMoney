@@ -16,6 +16,7 @@ Recorrente = function() {
     };
 };
 Recorrente.prototype = new ModelDb();
+
 Recorrente.buscaRecorrentes = function(filtro, onSuccess, onError) {
     ORM.select({
         select: 'r.*, b.descricao as BENEFICIARIO, c.descricao as CATEGORIA, co.descricao as CONTA',
@@ -34,6 +35,7 @@ Recorrente.buscaRecorrentes = function(filtro, onSuccess, onError) {
     });
 
 };
+
 Recorrente.adicionaAlteraRecorrente = function(jDados, onSuccess) {
     Beneficiario.getId(jDados.baneficiario, function(idBeneficiario) {
         Categoria.getId(jDados.categoria, function(idCategoria) {
@@ -102,3 +104,27 @@ Recorrente.registraRecorrente = function(jDados, onSuccess, onError) {
         });
     });
 };
+
+Recorrente.getTotalPrevistoMes = function (idConta, onSuccess) {
+    var mesAtual = App.getCurrentDate("yyyy-mm-") + "31";
+    ORM.select({
+        select: '*',
+        table: 'recorrente r ',
+        where: "id_conta = " + idConta + " AND data <= '" + mesAtual + "' AND excluido is not 1",
+    }, function(results) {
+        var total = 0;
+        for (var i in results) {
+            if (results[i].TIPO == Transacao.CREDITO) {
+                total += results[i].VALOR;
+            } else {
+                total -= results[i].VALOR;
+            }
+        }
+        onSuccess(total);
+    }, function() {
+        if (typeof onError !== 'undefined') {
+            onError();
+        }
+    });
+};
+

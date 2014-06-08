@@ -13,6 +13,11 @@ Conta = function() {
         ult_atualizacao: 'text',
         sincronizado: 'int'
     };
+    this.getDiaFechamento = function (mes, ano) {
+        var dataVencimento = this.dia_vencimento + "-" + mes + "-" + ano;
+        alert(dataVencimento);
+        return this.dia_vencimento;
+    },
     this.getSaldoAtual = function(callBack, data) {
         if (typeof data == 'undefined') {
             data = App.getCurrentDate();
@@ -44,10 +49,11 @@ Conta = function() {
     };
     this.getSaldoFinalDoMes = function(callBack) {
         var oThis = this;
+        var mesAtual = App.getCurrentDate("yyyy-mm-") + "31";
         ORM.select({
             select: '*',
             table: 'transacao',
-            where: 'id_conta = ' + oThis.id + ''
+            where: "id_conta = " + oThis.id + " AND data <= '" + mesAtual + "'"
         }, function(results) {
             var saldo = parseFloat(oThis.saldo_inicial);
             if (isNaN(saldo)) {

@@ -30,6 +30,11 @@ ConfigController = function() {
                     }
                 });
             });
+            $('#btnTeste3').click(function() {
+                new Conta().findById(6, function(oConta) {
+                    alert(oConta.getDiaFechamento(6, 2014));
+                });
+            });
             $('#btnSincronizar').click(function() {
                 var oConfig = JSON.parse(App.getConfig('configuracao'));
                 oApi = new Api();

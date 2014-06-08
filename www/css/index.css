@@ -237,3 +237,12 @@ button {
 .linhaCategoria .btnEditar {
     font-size: 20px;
 }
+
+.icon-small {
+    font-size: 10px;
+    margin-left: 4px;
+}
+
+.infoSmall {
+    font-size: 10px;
+}
