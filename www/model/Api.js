@@ -65,7 +65,8 @@ Api = function() {
                 platform: App.getInfoDevice("platform"),
                 framework: App.getInfoDevice("cordova"),
                 model: App.getInfoDevice("model"),
-                versao: App.getInfoDevice("version")
+                versao: App.getInfoDevice("version"),
+                app_versao: App.getVersao()
             },
             user: {
                 email: this.email,
