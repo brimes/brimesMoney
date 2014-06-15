@@ -105,8 +105,8 @@ Recorrente.registraRecorrente = function(jDados, onSuccess, onError) {
     });
 };
 
-Recorrente.getTotalPrevistoMes = function (idConta, onSuccess) {
-    var mesAtual = App.getCurrentDate("yyyy-mm-") + "31";
+Recorrente.getTotalPrevistoMes = function (idConta, onSuccess, diaVenc) {
+    var mesAtual = App.getCurrentDate("yyyy-mm-") + diaVenc;
     ORM.select({
         select: '*',
         table: 'recorrente r ',

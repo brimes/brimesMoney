@@ -22,6 +22,21 @@ CategoriaController = function () {
             } else {
                 $('#btnApagar').show();
             }
+            new Conta().findAll("status is not " + Conta.STATUS_DESATIVADA, function (oContas) {
+                for (var i in oContas) {
+                    var oConta = oContas[i];
+                    $('#listaDeContas').append("<li>" 
+                            + "<a href='#' class='opcaoConta' id_conta='" + oConta.id + "'>" 
+                            + oConta.descricao + "</a></li>");
+                }
+                $('#listaDeContas').append("<li class='divider'></li><li>" 
+                        + "<a href='#' class='opcaoConta' id_conta='0'>Nenhuma conta</a></li>");
+                $('.opcaoConta').click(function () {
+                    $('#lblConta').html($(this).html());
+                    $('#idConta').val($(this).attr('id_conta'));
+                });
+            });
+            
             $('#btnApagar').click(function() {
                 if (!confirm('Apagar a categoria?')) {
                     return false;
@@ -42,6 +57,7 @@ CategoriaController = function () {
                     oCategoria.id = $('#idCategoria').val();
                     oCategoria.isNewRecord = false;
                 } 
+                oCategoria.id_conta = $('#idConta').val();
                 oCategoria.descricao = $('#descricao').val();
                 if ($('#planejamento').val() != "") {
                     oCategoria.planejado = $('#planejamento').val();
@@ -61,6 +77,14 @@ CategoriaController = function () {
         oCategoria.findById(idCategoria, function (oCategoria) {
             $('#descricao').val(oCategoria.descricao);
             $('#planejamento').val(oCategoria.planejado);
+            if (oCategoria.id_conta) {
+                $('#idConta').val(oCategoria.id_conta);
+                new Conta().findById(oCategoria.id_conta, function (oConta) {
+                   $('#lblConta').html(oConta.descricao); 
+                });
+            } else {
+                $('#lblConta').html("Nenhuma conta"); 
+            }
         });
     };
     

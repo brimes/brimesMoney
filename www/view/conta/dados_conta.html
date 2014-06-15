@@ -29,14 +29,15 @@
             </div>            
         </div>
     </div>
-    <div class="row linha_form" id="dadosCredito" style="display:none">
+    <div class="row linha_form">
         <div class="form-group col-xs-6 col-sm-4 col-lg-2">
             <div class="input-group">
                 <span class="input-group-addon"><span class="glyphicon glyphicon-pushpin"></span></span>
                 <input type="text" placeholder="Dia venc." class="form-control obrigatorio" id="diaVencimento">
             </div>
+            <h5><small>Coloque 0 para fim do mes</small></h5>
         </div>
-        <div class="form-group col-xs-6 col-sm-4 col-lg-2">
+        <div class="form-group col-xs-6 col-sm-4 col-lg-2" id="dadosCredito">
             <div class="input-group">
                 <span class="input-group-addon"><span class="glyphicon glyphicon-usd"></span></span>
                 <input type="number" placeholder="Limite" class="form-control obrigatorio" id="limiteCredito">

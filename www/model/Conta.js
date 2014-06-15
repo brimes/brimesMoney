@@ -14,9 +14,33 @@ Conta = function() {
         sincronizado: 'int'
     };
     this.getDiaFechamento = function (mes, ano) {
-        var dataVencimento = this.dia_vencimento + "-" + mes + "-" + ano;
-        alert(dataVencimento);
-        return this.dia_vencimento;
+        if (typeof mes == 'undefined') {
+            mes = App.getCurrentDate("mm");
+        }
+        if (typeof ano == 'undefined') {
+            ano = App.getCurrentDate("yyyy");
+        }
+        
+        var aDataAtual = new Array(ano, mes, App.getCurrentDate("dd"));
+        var diaFim = this.dia_vencimento || 31;
+        if (diaFim < 10) {
+            diaFim = "0"+diaFim;
+        }
+        
+        var mesAtual = aDataAtual[1];
+        if (parseInt(aDataAtual[2]) > diaFim) {
+            mesAtual = parseInt(mesAtual) + 1;
+            if (mesAtual < 10) {
+                mesAtual = "0" + mesAtual;
+            }
+        }
+        var mesReferencia = aDataAtual[0] + "-" + mesAtual + "-" + diaFim;
+        
+        if (this.tipo == Conta.TIPO_CREDITO) {
+            mesReferencia = App.decDate(mesReferencia, 11, 'day');
+        }
+        
+        return mesReferencia;
     },
     this.getSaldoAtual = function(callBack, data) {
         if (typeof data == 'undefined') {
@@ -49,11 +73,11 @@ Conta = function() {
     };
     this.getSaldoFinalDoMes = function(callBack) {
         var oThis = this;
-        var mesAtual = App.getCurrentDate("yyyy-mm-") + "31";
+        var mesReferencia = this.getDiaFechamento();
         ORM.select({
             select: '*',
             table: 'transacao',
-            where: "id_conta = " + oThis.id + " AND data <= '" + mesAtual + "'"
+            where: "id_conta = " + oThis.id + " AND data <= '" + mesReferencia + "'"
         }, function(results) {
             var saldo = parseFloat(oThis.saldo_inicial);
             if (isNaN(saldo)) {

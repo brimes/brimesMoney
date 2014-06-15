@@ -141,14 +141,29 @@ Transacao.buscaTransacoes = function(filtro, onSuccess, onError) {
     });
 
 };
-Transacao.getTotalGastoNoPeriodoParaCategoria = function(idCategoria, callBack) {
-    var dataAtual = App.getCurrentDate()
+Transacao.getTotalGastoNoPeriodoParaCategoria = function(jParams, callBack) {
+    var idCategoria = jParams.idCategoria;
+    var dataAtual = App.getCurrentDate();
     var dataAtualInicio = dataAtual.substr(0, 7) + "-01";
     var dataAtualFim = dataAtual.substr(0, 7) + "-31";
+    if (jParams.diaCorte != 0) {
+        var aData = dataAtual.split("-");
+        var dia = jParams.diaCorte;
+        if (dia < 10) {
+            dia = "0" + dia;
+        }
+        if (parseInt(aData[2]) > parseInt(jParams.diaCorte)) {
+            dataAtualInicio = dataAtual.substr(0, 7) + "-" + dia;
+            dataAtualFim = App.incDate(dataAtualInicio, 1, 'month');
+        } else {
+            dataAtualFim = dataAtual.substr(0, 7) + "-" + dia;
+            dataAtualInicio = App.decDate(dataAtualFim, 1, 'month');
+        }
+    }
     ORM.select({
         select: 't.*',
         table: 'transacao t',
-        where: "id_categoria = " + idCategoria + " " 
+        where: "id_categoria in (" + idCategoria + ") " 
                 + "AND (data >= '" + dataAtualInicio + "' AND data <= '" + dataAtualFim + "')"
     }, function(results) {
         var valorTotal = 0;

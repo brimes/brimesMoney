@@ -7,12 +7,22 @@
                 <input type="text" placeholder="Descrição" class="form-control obrigatorio" id="descricao">
             </div>
         </div>
-        <div class="form-group col-xs-12 col-sm-6 col-lg-3">
+        <div class="form-group col-xs-6 col-sm-6 col-lg-3">
             <div class="input-group">
                 <span class="input-group-addon"><span class="glyphicon glyphicon-usd"></span></span>
                 <input type="number" placeholder="Planejamento" class="form-control text-right campo_valor" id="planejamento">
             </div>
 
+        </div>
+        <div class="form-group col-xs-6 col-sm-6 col-lg-3">
+            <input type="hidden" id="idConta">
+            <div class="btn-group">
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                <span id="lblConta"></span> <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" role="menu" id="listaDeContas">
+              </ul>
+            </div>
         </div>
     </div>
     <button id="btnSalvar" type="button" class="btn btn-default pull-right">Salvar</button>

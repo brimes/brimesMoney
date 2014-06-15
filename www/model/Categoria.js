@@ -6,10 +6,11 @@ Categoria = function() {
         total_transacoes: 'int',
         ultima_transacao: 'text',
         planejado: 'float',
-        sincronizado: 'int'
+        sincronizado: 'int',
+        id_conta: 'int',
     };
-    
-    this.buscaPorRelevancia = function (filtro, onSuccess, onError) {
+
+    this.buscaPorRelevancia = function(filtro, onSuccess, onError) {
         ORM.select({
             select: "*",
             table: this.table,
@@ -23,7 +24,7 @@ Categoria = function() {
             }
             onSuccess(dadosRetorno);
         }, onError);
-        
+
     };
 
 };
@@ -57,12 +58,12 @@ Categoria.getId = function(descricao, onSuccess) {
 };
 Categoria.acrescentaNumeroTransacoes = function(idCategoria, onSuccess) {
     if (typeof onSuccess == 'undefined') {
-        onSuccess = function () {
+        onSuccess = function() {
             App.log('Salvo com sucesso...');
         }
     }
     var oCat = new Categoria();
-    oCat.findById(idCategoria, function (oCat) {
+    oCat.findById(idCategoria, function(oCat) {
         if (oCat.total_transacoes == null) {
             oCat.total_transacoes = 0;
         }
@@ -71,16 +72,57 @@ Categoria.acrescentaNumeroTransacoes = function(idCategoria, onSuccess) {
         oCat.save(onSuccess);
     });
 };
-Categoria.getSaldoDisponivel = function (idCategoria, callBack) {
-    var oCategoria = new Categoria();
-    oCategoria.findById(idCategoria, function (oCategoria) {
-        if (oCategoria.planejado == null) {
+Categoria.getSaldoDisponivel = function(jParams, callBack) {
+    var filtro = "";
+    var buscaPorConta = false;
+    if (typeof jParams == 'object') {
+        if (typeof jParams.id_conta != 'undefined') {
+            filtro += "id_conta = " + jParams.id_conta + " ";
+            buscaPorConta = true;
+        } else {
+            filtro += "id = " + jParams.id_categoria + " ";
+        }
+
+    } else {
+        filtro += "id = " + jParams + " ";
+    }
+
+    new Categoria().findAll(filtro, function(oCategorias) {
+        var totalPlanejado = null;
+        var idsCategorias = [];
+        var categoriaTemConta = false;
+        var idConta = 0;
+        for (var i in oCategorias) {
+            var oCategoria = oCategorias[i];
+            if (oCategoria.planejado != null) {
+                idsCategorias.push(oCategoria.id)
+                totalPlanejado += parseFloat(oCategoria.planejado);
+                if (oCategoria.id_conta) {
+                    idConta = oCategoria.id_conta;
+                    categoriaTemConta = true;
+                } 
+            }
+        }
+        
+        if (totalPlanejado == null) {
             callBack(null);
         } else {
-            Transacao.getTotalGastoNoPeriodoParaCategoria(oCategoria.id, function (totalGasto) {
-                var saldo = parseFloat(oCategoria.planejado) - parseFloat(totalGasto);
-                callBack(saldo);
-            });
+            if (buscaPorConta || categoriaTemConta) {
+                new Conta().findById(idConta, function(oConta) {
+                    Transacao.getTotalGastoNoPeriodoParaCategoria({
+                        idCategoria: idsCategorias,
+                        diaCorte: oConta.dia_vencimento
+                    }, function(totalGasto) {
+                        var saldo = totalPlanejado - parseFloat(totalGasto);
+                        callBack(saldo);
+                    });
+                });
+            } else {
+                Transacao.getTotalGastoNoPeriodoParaCategoria({idCategoria: idsCategorias, diaCorte: 0}, function(totalGasto) {
+                    var saldo = totalPlanejado - parseFloat(totalGasto);
+                    callBack(saldo);
+                });
+            }
         }
     });
 };

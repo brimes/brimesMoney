@@ -147,6 +147,10 @@ AppController = function() {
                             oBenefic.id_ultima_categoria = oTrn.id_categoria;
                             oBenefic.save(function () {});
                         });
+                        new Categoria().findById(oTrn.id_categoria, function (oCateg) {
+                            oCateg.total_transacoes = parseInt(oCateg.total_transacoes) + 1;
+                            oCateg.save(function () {});
+                        });
                         if ($('#tipo_pagamento').find('.selecionado').attr('tipo') == 1) {
                             oThis.registraPagador(function () {
                                 App.execute('recorrente/index');

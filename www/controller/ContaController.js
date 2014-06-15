@@ -62,8 +62,8 @@ ContaController = function() {
                 oConta.saldo_inicial = $('#saldoInicial').val();
                 oConta.status = $('#contaDesativada').is(':checked') ? Conta.STATUS_DESATIVADA : Conta.STATUS_ATIVA;
                 oConta.tipo = tipoConta;
+                oConta.dia_vencimento = $('#diaVencimento').val();
                 if (tipoConta == Conta.TIPO_CREDITO) {
-                    oConta.dia_vencimento = $('#diaVencimento').val();
                     oConta.limite = $('#limiteCredito').val();
                 }
                 oConta.save(function() {
