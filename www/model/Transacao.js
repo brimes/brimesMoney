@@ -212,7 +212,7 @@ Transacao.atualizaSaldoAcumulado = function(jDados, callBack) {
     new Conta().findById(jDados.id_conta, function (oConta) {
         oConta.getSaldoAtual(function (saldo) {
             var saldoAcumulado = parseFloat(saldo);
-            Transacao.buscaTransacoes('id_conta = ' + jDados.id_conta + " AND data > '" + dataInicio + "'", function (aDadosTrn) {
+            Transacao.buscaTransacoes('t.id_conta = ' + jDados.id_conta + " AND t.data > '" + dataInicio + "'", function (aDadosTrn) {
                 for (var i in aDadosTrn) {
                     var oDadosTrn = aDadosTrn[i]
                     var oTransacao = new Transacao();

@@ -1,4 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
+        <file>file:/Users/brunolima/mobile/phonegap/brimesMoney/www/model/Api.js</file>
+        <file>file:/Users/brunolima/mobile/phonegap/brimesMoney/www/config/const.js</file>
+        <file>file:/Users/brunolima/mobile/phonegap/brimesMoney/www/helper/ContaHelper.js</file>
+        <file>file:/Users/brunolima/mobile/phonegap/brimesMoney/www/css/index.css</file>
+        <file>file:/Users/brunolima/mobile/phonegap/brimesMoney/www/controller/ContaController.js</file>
+        <file>file:/Users/brunolima/mobile/phonegap/brimesMoney/www/controller/TransacaoController.js</file>
+        <file>file:/Users/brunolima/mobile/phonegap/brimesMoney/www/helper/RecorrenteHelper.js</file>
+        <file>file:/Users/brunolima/mobile/phonegap/brimesMoney/www/model/Recorrente.js</file>
+        <file>file:/Users/brunolima/mobile/phonegap/brimesMoney/www/lib/App.js</file>
+        <file>file:/Users/brunolima/mobile/phonegap/brimesMoney/www/model/Transacao.js</file>
+        <file>file:/Users/brunolima/mobile/phonegap/brimesMoney/www/model/Conta.js</file>
+        <file>file:/Users/brunolima/mobile/phonegap/brimesMoney/www/view/conta/index.html</file>
+        <file>file:/Users/brunolima/mobile/phonegap/brimesMoney/www/controller/ConfigController.js</file>
+        <file>file:/Users/brunolima/mobile/phonegap/brimesMoney/www/view/config/index.html</file>
+        <file>file:/Users/brunolima/mobile/phonegap/brimesMoney/www/view/conta/dados_conta.html</file>
+        <file>file:/Users/brunolima/mobile/phonegap/brimesMoney/www/model/Categoria.js</file>
+        <file>file:/Users/brunolima/mobile/phonegap/brimesMoney/www/view/categoria/view.html</file>
+        <file>file:/Users/brunolima/mobile/phonegap/brimesMoney/www/view/recorrente/_registra_recorrente.html</file>
+        <file>file:/Users/brunolima/mobile/phonegap/brimesMoney/www/controller/RecorrenteController.js</file>
+        <file>file:/Users/brunolima/mobile/phonegap/brimesMoney/www/controller/CategoriaController.js</file>
+        <file>file:/Users/brunolima/mobile/phonegap/brimesMoney/www/controller/AppController.js</file>
+        <file>file:/Users/brunolima/mobile/phonegap/brimesMoney/www/lib/ModelDb.js</file>
+    </open-files>
 </project-private>

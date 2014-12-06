@@ -14,7 +14,9 @@ RecorrenteHelper = {
             var parcela = (dados.PARCELA ? parseInt(dados.PARCELA) : 1);
             parcela = parcela + diffMeses;
             if (parcela > parseInt(dados.TOTAL_PARCELAS)) {
-                return "";
+                if (dados.DATA >= App.getCurrentDate()) {
+                    return "";
+                }
             }
             parcelas = " - " + parcela + " / " + dados.TOTAL_PARCELAS;
         }
