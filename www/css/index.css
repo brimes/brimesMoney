@@ -246,3 +246,62 @@ button {
 .infoSmall {
     font-size: 10px;
 }
+
+.icone-menu-circulo {
+    position: fixed;
+    color: #52b323;
+    font-size: 20px;
+    bottom: 5px;
+    right: 20px;
+    text-shadow: 2px 3px 7px #555;
+}
+
+.icon-menu-1 {
+    color: #0d5399;
+    font-size: 15px;
+    position: absolute;
+    top: 10px;
+    left: 13px;
+}
+
+.icon-menu-2 {
+    color: #0d5399;
+    font-size: 15px;
+    position: absolute;
+    top: 10px;
+    left: 27px;
+}
+
+.icon-menu-3 {
+    color: #0d5399;
+    font-size: 15px;
+    position: absolute;
+    top: 25px;
+    left: 13px;
+
+}
+
+.icon-menu-4 {
+    color: #0d5399;
+    font-size: 15px;
+    position: absolute;
+    top: 25px;
+    left: 27px;    
+}
+
+.icon-interno-menu {
+    color: #0d5399;
+    font-size: 35px;
+    position: absolute;
+    top: 15px;
+    left: 15px;
+}
+
+.icon-sub-menu {
+    color: #0d5399;
+    text-shadow: none;
+}
+
+.sub-menu {
+    opacity: 0;
+}

@@ -2,14 +2,13 @@ var App = {
     callbackPage: function () {
     },
     opcoesMenu: new Array(
-            {label: "Nova despesa", icon: "fa-minus", action: "app/transacao?tipo=D", position: "70;5"},
-    {label: "Nova receita", icon: "fa-plus", action: "app/transacao?tipo=C", position: "70;55"},
-    {label: "Transferencia", icon: "fa-exchange", action: "app/transacao?tipo=T", position: "20;55"},
-    {label: "Contas", icon: "fa-money", action: "conta/index", position: "120;5"},
-    {label: "Categorias", icon: "fa-tags", action: "categoria/index", position: "120;55"},
-    {label: "Transações Recorrentes", icon: "fa-list", action: "recorrente/index", position: "20;105"},
-    {label: "Configurações", icon: "fa-cogs", action: "config/index", position: "70;105"},
-    {label: "Fechar", icon: "fa-power-off", action: "appClose", position: "120;105"}
+            {label: "Nova dispesa", icon: "glyphicon-minus-sign red", action: "app/transacao?tipo=D", inicial: true},
+    {label: "Nova receita", icon: "glyphicon-plus-sign blue", action: "app/transacao?tipo=C", inicial: true},
+    {label: "Transferencia", icon: "glyphicon-transfer", action: "app/transacao?tipo=T", inicial: true},
+    {label: "Contas", icon: "glyphicon-list-alt", action: "conta/index", inicial: true},
+    {label: "Categorias", icon: "glyphicon-tag", action: "categoria/index", inicial: false},
+    {label: "Transações Recorrentes", icon: "glyphicon-th-list", action: "recorrente/index", inicial: false},
+    {label: "Configurações", icon: "", action: "config/index", inicial: false}
     ),
     aMesesExtenso: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"],
     dadosMove: {},
@@ -17,7 +16,6 @@ var App = {
     actionAtual: "",
     controller: "",
     view: "",
-    menuAtivo: false,
     locationHome: Util.dirname(location.href),
     execSeq: {},
     init: function () {
@@ -226,21 +224,30 @@ var App = {
         var oThis = this;
         for (var i in this.opcoesMenu) {
             var optMenu = this.opcoesMenu[i];
-            if (optMenu.position != undefined) {
-                var htmlBotao = "<div class=\"icone-menu-circulo sub-menu\"" 
-                        + " position=\"" + optMenu.position + "\"" 
-                        + " action=\"" + optMenu.action + "\"" 
-                        + " > "
-                        + "    <span class=\"fa-stack fa-lg\">"
-                        + "        <i class=\"fa fa-circle fa-stack-2x\"></i>"
-                        + "        <i class=\"icon-sub-menu fa " + optMenu.icon + " fa-stack-1x\"></i>"
-                        + "    </span>"
-                        + "</div>";
-                $('#itensMenu').append(htmlBotao);
+//            $('#itensMenu').append("<div id='' class='icone-menu-circulo sub-menu'>"
+//                    + "<i class='fa fa-circle'></i>"
+//                    + "</div>");
+            if (optMenu.inicial == true) {
+                $('#btn_fixos').append("<span class=\"btn btn_menu btn_navbar\" action=\"" + optMenu.action + "\"> "
+                        + "<span class=\"glyphicon " + optMenu.icon + "\"></span>"
+                        + "</span>");
+            } else {
+                $('#menuOpcoes').append("<button type=\"button\" class=\"btn btn-default btn_menu opcao_menu\" action=\"" + optMenu.action + "\">"
+                        + "   <span class=\"glyphicon " + optMenu.icon + "\"></span> " + optMenu.label + ""
+                        + "</button>");
             }
         }
-        $(".sub-menu").click(function (e) {
+        if (App.isAndroid()) {
+            $('#menuOpcoes').append("<button type=\"button\" class=\"btn btn-default btn_menu opcao_menu\" action=\"appClose\">"
+                    + "   <span class=\"glyphicon glyphicon-off\"></span> Encerrar"
+                    + "</button>");
+        }
+        $(".btn_menu").click(function (e) {
             e.stopPropagation();
+        });
+        $(".btn_menu").on('touchstart', function (event) {
+            event.stopPropagation();
+            event.preventDefault();
             var action = $(this).attr('action');
             if (action == 'migrate') {
                 dbSQL.migrate(function () {
@@ -248,23 +255,27 @@ var App = {
                 });
             } else if (action == 'appClose') {
                 App.close();
+            } else if (action == 'toggleMenu') {
+                App.toggleMenu();
             } else {
-                oThis.toggleMenu();
+                $("#btnMenuToggle").children('span').addClass('glyphicon-chevron-up');
+                $("#btnMenuToggle").children('span').removeClass('glyphicon-chevron-down');
+                $('#menuOpcoes').slideUp('fast');
                 App.execute(action);
             }
         });
     },
     toggleMenu: function () {
-        if (!this.menuAtivo) {
-            this.menuAtivo = true;
-            $('.sub-menu').each(function () {
-                var aPosition = $(this).attr('position').split(";");
-                $(this).animate({right: aPosition[0] + "px", bottom: aPosition[1] + "px", opacity: 100}, 250);
-            });
+        if ($('#btnMenuToggle').children('span').hasClass('glyphicon-chevron-up')) {
+            $('#btnMenuToggle').children('span').removeClass('glyphicon-chevron-up');
+            $('#btnMenuToggle').children('span').addClass('glyphicon-chevron-down');
+            $('#menuOpcoes').slideDown('fast');
         } else {
-            this.menuAtivo = false;
-            $('.sub-menu').animate({right: "20px", bottom: "5px", opacity: 0}, 250);
+            $('#btnMenuToggle').children('span').addClass('glyphicon-chevron-up');
+            $('#btnMenuToggle').children('span').removeClass('glyphicon-chevron-down');
+            $('#menuOpcoes').slideUp('fast');
         }
+
     },
     log: function (texto, tipo) {
         var debug = this.getConfig('debug');

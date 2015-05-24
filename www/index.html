@@ -22,9 +22,15 @@
         <!-- JQuery -->
         <script src="lib/jquery-2.0.3.min.js"></script>
 
+        <!-- FastClick -->
+        <script type='application/javascript' src='lib/fastclick.js'></script>
+
         <!-- Bootstrap -->
         <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
         <script src="lib/bootstrap.min.js"></script>
+
+        <!-- Font Awesome -->
+        <link href="css/font-awesome.min.css" rel="stylesheet" media="screen">
 
         <!-- Datepicket -->
         <link href="css/datepicker.css" rel="stylesheet" media="screen">
@@ -59,7 +65,7 @@
 
         <div id="conteudoPagina"></div>
 
-        <nav class="navbar navbar-default navbar-fixed-bottom barra_opcoes" role="navigation">
+        <nav class="navbar navbar-default navbar-fixed-bottom barra_opcoes" role="navigation" style="display:none">
             <div id="barraFixa">
                 Total selecionado.
             </div>
@@ -76,25 +82,43 @@
                     <span class="glyphicon glyphicon-chevron-up"></span>
                 </span>
             </div>
-        </nav>        
+        </nav>
+        <div id="itensMenu">
+        </div>
+        <div id="btnMenuSuspenso" class="icone-menu-circulo">
+            <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-circle icon-menu-1"></i>
+                <i class="fa fa-circle icon-menu-2"></i>
+                <i class="fa fa-circle icon-menu-3"></i>
+                <i class="fa fa-circle icon-menu-4"></i>
+            </span>
+        </div>
         <script>
+            var menuAtivo = false;
             App.log("Importanto controllers");
             App.importController();
             App.log("Importando modelos");
             App.importModels();
             App.log("Importando helpers");
             App.importHelper();
-            document.addEventListener("deviceready", function() {
+            document.addEventListener("deviceready", function () {
                 App.log("Device Ready");
                 App.init();
             }, false);
 
-            $(document).ready(function() {
+            $(document).ready(function () {
                 App.log("Document Ready init");
+                $(function () {
+                    FastClick.attach(document.body);
+                });
+                $('#btnMenuSuspenso').click(function () {
+                    App.toggleMenu();
+                });
                 App.ready();
             });
 
-            $(document).bind('mobileinit', function() {
+            $(document).bind('mobileinit', function () {
                 App.log("Mobile init Ready");
             });
         </script>
